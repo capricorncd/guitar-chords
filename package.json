@@ -1,0 +1,56 @@
+{
+  "name": "guitar-chords",
+  "version": "0.0.1",
+  "description": "Generate a guitar chords or edit it.",
+  "type": "module",
+  "main": "./dist/guitar-chords.umd.js",
+  "module": "./dist/guitar-chords.esm.js",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/guitar-chords.esm.js",
+      "default": "./dist/guitar-chords.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite --open",
+    "build": "vite build",
+    "build:demo": "vite build --config vite.demo.ts",
+    "app": "npm run dev -w app",
+    "eslint": "eslint . --fix",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "guitar-chords",
+    "guitar",
+    "chords",
+    "editor",
+    "canvas",
+    "svg"
+  ],
+  "files": [
+    "dist",
+    "src"
+  ],
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "eslint": "^9.12.0",
+    "globals": "^15.11.0",
+    "husky": "^9.1.6",
+    "inquirer": "^12.0.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.8.1",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.2"
+  },
+  "repository": {
+    "url": "https://github.com/capricorncd/guitar-chords"
+  },
+  "author": "Capricorncd<capricorncd@qq.com>",
+  "license": "MIT"
+}

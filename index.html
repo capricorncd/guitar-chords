@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guitar Chords - Capricorncd</title>
+  <meta name="description" content="Generate a guitar chords or edit it.">
+  <meta name="keywords" content="guitar-chords, guitar, chords, editor, canvas, svg">
+  <meta name="author" content="Capricorncd">
+  <style>
+    canvas {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+  import { GuitarChords } from './src/index.ts'
+
+  const app = document.getElementById('app')
+  app.append(
+    new GuitarChords({
+    name: 'C',
+    matrix: [
+      [0, 0, 0, 0, 1, 0],
+      [0, 0, 2, 0, 0, 0],
+      [3, 4, 0, 0, 0, 0],
+    ]
+  }).draw().element,
+  new GuitarChords({
+    name: 'Dm',
+    matrix: [
+      [0, 0, 0, 0, 0, 1],
+      [0, 0, 0, 2, 0, 0],
+      [0, 0, 0, 0, 3, 0],
+    ]
+  }).draw().element,
+  new GuitarChords({
+    name: 'Em',
+    matrix: [
+      [0, 0, 0, 0, 0, 0],
+      [0, 2, 3, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+    ]
+  }).draw().element,
+  new GuitarChords({
+    name: 'F',
+    matrix: [
+      [1, 1, 0, 0, 0, 1],
+      [0, 0, 0, 2, 0, 0],
+      [0, 3, 4, 0, 0, 0],
+    ]
+  }).draw().element,
+  new GuitarChords({
+    name: 'G',
+    matrix: [
+      [0, 0, 0, 0, 0, 0],
+      [0, 2, 0, 0, 0, 0],
+      [3, 0, 0, 0, 0, 4],
+    ]
+  }).draw().element,
+  new GuitarChords({
+    name: 'Am',
+    matrix: [
+      [0, 0, 0, 0, 1, 0],
+      [0, 0, 2, 3, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+    ]
+  }).draw().element,
+  new GuitarChords({
+    name: 'G7',
+    matrix: [
+      [0, 0, 0, 0, 0, 1],
+      [0, 2, 0, 0, 0, 0],
+      [3, 0, 0, 0, 0, 0],
+    ]
+  }).draw().element,
+  new GuitarChords({
+    name: 'C3',
+    startFrets: 3,
+    matrix: [
+      [1, 1, 0, 0, 0, 1],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 2, 3, 4, 0],
+    ]
+  }).draw().element,
+)
+
+</script>
+</body>
+</html>
