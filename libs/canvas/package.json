@@ -26,7 +26,8 @@
   ],
   "files": [
     "src",
-    "dist"
+    "dist",
+    "README.md"
   ],
   "homepage": "https://github.com/capricorncd/guitar-chords#readme",
   "author": "Capricorncd <capricorncd@qq.com>",
