@@ -36,9 +36,12 @@
       "eslint --fix"
     ]
   },
-  "workspaces": ["libs/*"],
+  "workspaces": [
+    "libs/*"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.12.0",
+    "@zx-libs/header": "^0.0.2",
     "eslint": "^9.12.0",
     "globals": "^15.11.0",
     "husky": "^9.1.6",

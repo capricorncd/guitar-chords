@@ -14,6 +14,7 @@ export class GuitarChords {
   #element: HTMLCanvasElement
   #context: CanvasRenderingContext2D;
   #nameFontSize: number;
+  #dpr: number;
 
   constructor(options: Partial<GuitarChordsOptions> = {}) {
     this.#options = {
@@ -21,10 +22,11 @@ export class GuitarChords {
       ...options
     }
 
-    const { lineSpacing } = this.#options
+    const { lineSpacing, devicePixelRatio } = this.#options
     this.#element = document.createElement('canvas') as HTMLCanvasElement
     this.#context = (this.#element as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D
     this.#nameFontSize = lineSpacing.y
+    this.#dpr = devicePixelRatio
   }
   get element() {
     return this.#element
@@ -32,26 +34,26 @@ export class GuitarChords {
 
   get width() {
     const { stringCount, lineSpacing, lineWidth } = this.#options
-    return lineSpacing.x * (stringCount + 1) + lineWidth * stringCount
+    return (lineSpacing.x * (stringCount + 1) + lineWidth * stringCount) * this.#dpr
   }
 
   get height() {
     const { lineSpacing, lineWidth, matrix, spacing } = this.#options
-    return lineSpacing.y * matrix.length + lineWidth * (matrix.length + 1) + this.#nameFontSize + spacing
+    return (lineSpacing.y * matrix.length + lineWidth * (matrix.length + 1) + this.#nameFontSize + spacing) * this.#dpr
   }
 
   /**
    * 网格尺寸
    */
-  get gridSize() {
+  get gridRect() {
     const { lineSpacing, lineWidth, stringCount, matrix, spacing } = this.#options
     return {
-      width: lineSpacing.x * (stringCount - 1) + lineWidth * stringCount,
-      height: lineSpacing.y * matrix.length + lineWidth * (matrix.length + 1),
-      left: lineSpacing.x,
-      top: this.#nameFontSize + spacing,
-      right: this.width - lineSpacing.x,
-      bottom: this.height,
+      width: (lineSpacing.x * (stringCount - 1) + lineWidth * stringCount) * this.#dpr,
+      height: (lineSpacing.y * matrix.length + lineWidth * (matrix.length + 1)) * this.#dpr,
+      left: lineSpacing.x * this.#dpr,
+      top: (this.#nameFontSize + spacing) * this.#dpr,
+      right: (this.width - lineSpacing.x) * this.#dpr,
+      bottom: this.height * this.#dpr,
     }
   }
 
@@ -60,8 +62,13 @@ export class GuitarChords {
   }
 
   draw() {
-    this.#element.setAttribute('width', this.width.toString())
-    this.#element.setAttribute('height', this.height.toString())
+    const { width, height } = this
+    this.#element.width = width
+    this.#element.height = height
+    this.#element.style.width = `${width / this.#dpr}px`
+    this.#element.style.height = `${height / this.#dpr}px`
+    this.#context.scale(this.#dpr, this.#dpr)
+
     const { startFrets, matrix } = this.#options
 
     // 绘制网格
@@ -85,7 +92,7 @@ export class GuitarChords {
     context.font = `${this.#nameFontSize}px Arial`
     context.textAlign = 'center'
     context.textBaseline = 'middle'
-    context.fillText(name, this.width / 2, this.#nameFontSize / 2)
+    context.fillText(name, this.width / (2 * this.#dpr), this.#nameFontSize / 2)
   }
 
   #drawFingerPositions(matrix: number[][]) {
@@ -134,15 +141,19 @@ export class GuitarChords {
     context.font = `italic ${fontSize}px Arial`
     context.textAlign = 'left'
     context.textBaseline = 'middle'
-      context.fillText(startFrets.toString(),
-        0,
-        this.gridSize.top + lineSpacing.y / 2 + lineWidth * 1.5
-      )
+    context.fillText(startFrets.toString(),
+      0,
+      (this.gridRect.top / this.#dpr + lineSpacing.y / 2 + lineWidth * 1.5)
+    )
   }
 
+  /**
+   * 绘制网格
+   */
   #drawGrid() {
     const { matrix, lineWidth, lineSpacing, color, stringCount, spacing } = this.#options
     const context = this.#context
+    /** 品位数 */
     const fretCount = matrix.length
     // 绘制竖线（代表琴弦）
     for (let i = 0; i < stringCount; i++) {
@@ -160,7 +171,7 @@ export class GuitarChords {
       const y = i * (lineSpacing.y + lineWidth) + lineWidth / 2 + this.#nameFontSize + spacing
       context.beginPath()
       context.moveTo(lineSpacing.x, y)
-      context.lineTo(this.width - lineSpacing.x, y)
+      context.lineTo(this.width / this.#dpr - lineSpacing.x, y)
       context.strokeStyle = color
       context.lineWidth = lineWidth
       context.stroke()

@@ -2,25 +2,33 @@
   "name": "@guitar-chords/canvas",
   "description": "Use Canvas to generate guitar chords or edit it.",
   "authors": "Capricorncd",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "./dist/guitar-chords.umd.js",
-  "module": "./dist/guitar-chords.esm.js",
+  "module": "./dist/guitar-chords.es.js",
   "types": "./src/index.ts",
   "exports": {
     ".": {
-      "import": "./dist/guitar-chords.esm.js",
-      "default": "./dist/guitar-chords.umd.js"
+      "import": "./dist/guitar-chords.es.js",
+      "default": "./dist/guitar-chords.umd.js",
+      "types": "./src/index.ts"
     }
   },
   "scripts": {
-    "build": "vite build"
+    "build": "vite build && node ../../node_modules/@zx-libs/header --dir=dist",
+    "pl": "npm run build && npm publish",
+    "pl:first": "npm publish --access public"
   },
-  "keywords": ["guitar-chords", "guitar", "canvas"],
-  "files": ["src", "dist"],
-  "repository": {
-    "url": "https://github.com/capricorncd/guitar-chords"
-  },
-  "author": "Capricorncd<capricorncd@qq.com>",
+  "keywords": [
+    "guitar-chords",
+    "guitar",
+    "canvas"
+  ],
+  "files": [
+    "src",
+    "dist"
+  ],
+  "homepage": "https://github.com/capricorncd/guitar-chords#readme",
+  "author": "Capricorncd <capricorncd@qq.com>",
   "license": "MIT"
 }
