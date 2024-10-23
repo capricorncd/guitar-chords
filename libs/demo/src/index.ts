@@ -1,24 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guitar Chords - Capricorncd</title>
-  <meta name="description" content="Generate a guitar chords or edit it.">
-  <meta name="keywords" content="guitar-chords, guitar, chords, editor, canvas, svg">
-  <meta name="author" content="Capricorncd">
-  <style>
-    canvas {
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-<div id="app"></div>
-<script type="module">
-  import { GuitarChords } from './src/index.ts'
+import { GuitarChords } from '@guitar-chords/canvas'
 
-  const app = document.getElementById('app')
+  const app = document.getElementById('app') as HTMLDivElement
   app.append(
     new GuitarChords({
     name: 'C',
@@ -86,7 +68,3 @@
     ]
   }).draw().element,
 )
-
-</script>
-</body>
-</html>

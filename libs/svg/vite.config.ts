@@ -7,6 +7,10 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   base: './',
   build: {
-    outDir: './demo'
+    lib: {
+      entry: './src/index.ts',
+      name: 'GuitarChords',
+      fileName: (format) => `guitar-chords.${format}.js`
+    }
   }
 })

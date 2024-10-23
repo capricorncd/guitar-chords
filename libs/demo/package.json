@@ -1,0 +1,12 @@
+{
+  "name": "@guitar-chords/demo",
+  "description": "description",
+  "authors": "Capricorncd",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "vite --open",
+    "build": "vite build"
+  },
+  "dependencies": {}
+}
