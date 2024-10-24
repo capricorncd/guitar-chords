@@ -5,18 +5,22 @@
   "version": "0.0.1",
   "type": "module",
   "main": "./dist/guitar-chords.umd.js",
-  "module": "./dist/guitar-chords.esm.js",
+  "module": "./dist/guitar-chords.es.js",
   "types": "./src/index.ts",
   "exports": {
     ".": {
-      "import": "./dist/guitar-chords.esm.js",
-      "default": "./dist/guitar-chords.umd.js"
+      "import": "./dist/guitar-chords.es.js",
+      "default": "./dist/guitar-chords.umd.js",
+      "types": "./src/index.ts"
     }
   },
   "scripts": {
-    "build": "vite build"
+    "build": "vite build && node ../../node_modules/@zx-libs/header --dir=dist",
+    "pl": "npm run build && npm publish",
+    "pl:first": "npm publish --access public"
   },
   "files": ["src", "dist"],
+  "homepage": "https://github.com/capricorncd/guitar-chords",
   "repository": {
     "url": "https://github.com/capricorncd/guitar-chords"
   },
