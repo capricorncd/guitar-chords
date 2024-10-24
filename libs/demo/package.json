@@ -6,7 +6,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "vite --open",
-    "build": "vite build"
+    "build": "vite build --emptyOutDir && node ../../node_modules/@zx-libs/header --dir=../../demo"
   },
   "dependencies": {}
 }

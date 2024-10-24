@@ -1,17 +1,8 @@
 {
   "name": "guitar-chords",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Generate a guitar chords or edit it.",
   "type": "module",
-  "main": "./dist/guitar-chords.umd.js",
-  "module": "./dist/guitar-chords.esm.js",
-  "types": "./src/index.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/guitar-chords.esm.js",
-      "default": "./dist/guitar-chords.umd.js"
-    }
-  },
   "scripts": {
     "dev": "npm run dev -w libs/demo",
     "build:demo": "npm run build -w libs/demo",
@@ -28,8 +19,7 @@
     "svg"
   ],
   "files": [
-    "dist",
-    "src"
+    "libs"
   ],
   "lint-staged": {
     "*.{js,ts}": [
