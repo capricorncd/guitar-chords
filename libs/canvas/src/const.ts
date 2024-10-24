@@ -6,6 +6,7 @@ import type { GuitarChordsOptions } from "./types";
 
 export const DEF_OPTIONS: GuitarChordsOptions = {
   name: '',
+  nameFontSize: 50,
   spacing: 10,
   lineWidth: 4,
   lineSpacing: {

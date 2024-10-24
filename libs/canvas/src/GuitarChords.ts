@@ -22,11 +22,12 @@ export class GuitarChords {
       ...options
     }
 
-    const { lineSpacing, devicePixelRatio } = this.#options
+    const { devicePixelRatio, nameFontSize } = this.#options
     this.#element = document.createElement('canvas') as HTMLCanvasElement
     this.#context = (this.#element as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D
-    this.#nameFontSize = lineSpacing.y
+    this.#nameFontSize = nameFontSize
     this.#dpr = devicePixelRatio
+    this.#draw()
   }
   get element() {
     return this.#element
@@ -57,11 +58,11 @@ export class GuitarChords {
     }
   }
 
-  get info() {
-    return {}
+  get data() {
+    return {...this.#options}
   }
 
-  draw() {
+  #draw() {
     const { width, height } = this
     this.#element.width = width
     this.#element.height = height

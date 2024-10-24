@@ -6,6 +6,8 @@
 /** 吉他和弦配置 */
 export interface GuitarChordsOptions {
   name: string,
+  /** 和弦名称字体大小 */
+  nameFontSize: number,
   /** 和弦名称与和弦网格的间距 */
   spacing: number
   /** 线条宽度 */
