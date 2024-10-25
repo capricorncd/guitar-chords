@@ -12,5 +12,5 @@ export default [
   pluginJs.configs.recommended,
   ...tsEslint.configs.recommended,
   // 不包含以下目录
-  {ignores: ['demo/**', '**/dist']}
+  {ignores: ['playground/**', '**/dist', 'web/**']}
 ];

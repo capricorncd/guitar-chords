@@ -1,12 +1,12 @@
 {
-  "name": "@guitar-chords/play",
+  "name": "@guitar-chords/demo",
   "description": "description",
   "authors": "Capricorncd",
   "version": "0.0.1",
   "main": "src/index.ts",
   "scripts": {
     "dev": "vite --open",
-    "build": "vite build --emptyOutDir && node ../../node_modules/@zx-libs/header --dir=../../demo/assets"
+    "build": "vite build --emptyOutDir && node ../../node_modules/@zx-libs/header --dir=../../playground/assets"
   },
   "dependencies": {}
 }

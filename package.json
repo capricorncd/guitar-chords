@@ -4,8 +4,8 @@
   "description": "Generate a guitar chords or edit it.",
   "type": "module",
   "scripts": {
-    "dev": "npm run dev -w libs/play",
-    "build:demo": "npm run build -w libs/play",
+    "dev": "npm run dev -w libs/demo",
+    "build:demo": "npm run build -w libs/demo",
     "build": "npm run build -w libs/canvas & npm run build -w libs/svg",
     "eslint": "eslint . --fix",
     "prepare": "husky"
