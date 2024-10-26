@@ -149,8 +149,10 @@ export class GuitarChords {
   }
 
   #drawFingerPositions(data: GuitarChordsData) {
-    const { stringSpacing, fingerCircleColor, stringLineWidth, fingerRadius, spacing, matrix, fretsSpacing, fretsLineWidth, nameFontSize, nutLineWidth, fingerNumberTextColor, showFingerNumber } = data
+    const { stringSpacing, fingerCircleColor, stringLineWidth, fingerRadius, spacing, matrix, fretsSpacing, fretsLineWidth, nameFontSize, nutLineWidth, fingerNumberTextColor, showFingerNumber, mergeFingerCircle } = data
     const fontSize = fingerRadius * 1.5
+
+    const fingerCircleMap = new Map<number, { x: number, y: number }[]>()
 
     for (let fret = 0; fret < matrix.length; fret++) {
       for (let string = 0; string < matrix[fret].length; string++) {
@@ -158,6 +160,37 @@ export class GuitarChords {
         if (fingerNumber > 0) {
           const x = string * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
           const y = (fret + 0.5) * (fretsSpacing + fretsLineWidth) + fretsLineWidth / 2 + nameFontSize + spacing + nutLineWidth - fretsLineWidth
+
+          // 大横按/小横按时，合并指法圆点
+          if (mergeFingerCircle) {
+            if (!fingerCircleMap.has(fingerNumber)) {
+              fingerCircleMap.set(fingerNumber, [])
+            }
+            const fingerCircleList = fingerCircleMap.get(fingerNumber)!
+            fingerCircleList.push({ x, y })
+
+            // 相同手指编号的最后一个指法圆点绘制
+            if (fingerCircleList.length > 1 && string === matrix[fret].lastIndexOf(fingerNumber)) {
+              const startPoint = fingerCircleList[0]
+              const endPoint = { x, y }
+              const line = document.createElementNS("http://www.w3.org/2000/svg", "line")
+              line.setAttribute('x1', `${startPoint.x}`)
+              line.setAttribute('y1', `${startPoint.y}`)
+              line.setAttribute('x2', `${endPoint.x}`)
+              line.setAttribute('y2', `${endPoint.y}`)
+              line.setAttribute('stroke', fingerCircleColor)
+              line.setAttribute('stroke-width', `${fingerRadius * 2}`)
+              line.setAttribute('stroke-linecap', 'round')
+              this.#element.appendChild(line)
+
+              // 在横按的最后一个位置绘制指法编号
+              if (showFingerNumber) {
+                this.#drawFingerNumber(x, y, fingerNumber, fingerNumberTextColor, fontSize)
+              }
+              continue
+            }
+          }
+
           const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle")
           circle.setAttribute('cx', `${x}`)
           circle.setAttribute('cy', `${y}`)
@@ -165,20 +198,25 @@ export class GuitarChords {
           circle.setAttribute('fill', fingerCircleColor)
           this.#element.appendChild(circle)
 
-          if (!showFingerNumber) continue
-
-          const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
-          text.setAttribute('x', `${x}`)
-          text.setAttribute('y', `${y + (nutLineWidth > fretsLineWidth ? fretsLineWidth : nutLineWidth) / 2}`)
-          text.setAttribute('fill', fingerNumberTextColor)
-          text.setAttribute('font-size', `${fontSize}`)
-          text.setAttribute('text-anchor', 'middle')
-          text.setAttribute('dominant-baseline', 'middle')
-          text.textContent = fingerNumber.toString()
-          this.#element.appendChild(text)
+          if (showFingerNumber && (!mergeFingerCircle || string === matrix[fret].lastIndexOf(fingerNumber))) {
+            this.#drawFingerNumber(x, y, fingerNumber, fingerNumberTextColor, fontSize)
+          }
         }
       }
     }
+  }
+
+  // 新增一个辅助方法来绘制指法编号
+  #drawFingerNumber(x: number, y: number, fingerNumber: number, color: string, fontSize: number) {
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
+    text.setAttribute('x', `${x}`)
+    text.setAttribute('y', `${y}`)
+    text.setAttribute('fill', color)
+    text.setAttribute('font-size', `${fontSize}`)
+    text.setAttribute('text-anchor', 'middle')
+    text.setAttribute('dominant-baseline', 'central')
+    text.textContent = fingerNumber.toString()
+    this.#element.appendChild(text)
   }
 
   #drawFretNumbers(data: GuitarChordsData) {
