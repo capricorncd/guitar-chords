@@ -1,5 +1,5 @@
 import { GuitarChords as CanvasGuitarChords } from '@guitar-chords/canvas'
-// import { GuitarChords as SvgGuitarChords } from '@guitar-chords/svg'
+import { GuitarChords as SvgGuitarChords } from '@guitar-chords/svg'
 
 const chordsList = [
   {
@@ -73,6 +73,7 @@ const chordsList = [
     name: 'C3',
     startFrets: 3,
     startFretsTextColor: '#f30',
+    nutLineWidth: 10,
     matrix: [
       [1, 1, 0, 0, 0, 1],
       [0, 0, 0, 0, 0, 0],
@@ -124,4 +125,4 @@ const svgTitle = document.createElement('h1')
 svgTitle.textContent = 'SVG'
 app.append(svgTitle)
 
-// app.append(...chordsList.map(v => new SvgGuitarChords(v).element))
+app.append(...chordsList.map(v => new SvgGuitarChords(v).element))
