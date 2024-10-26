@@ -48,6 +48,8 @@ export interface GuitarChordsData {
   fingerRadius: number
   // 指法圆点颜色
   fingerCircleColor: string
+  // 是否显示手指编号，默认true
+  showFingerNumber: boolean
   // 手指编号字体颜色，默认`#fff`
   fingerNumberTextColor: string
   // 和弦的起始品位数，默认0
@@ -56,6 +58,8 @@ export interface GuitarChordsData {
   startFretsTextColor: string
   // 和弦指法和品位数量的矩阵（二维数组，行表示弦，列表示品位）
   matrix: number[][]
+  // 字体，默认`Arial`
+  fontFamily: string
   // 设备像素比
   devicePixelRatio: number
 }

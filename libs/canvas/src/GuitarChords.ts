@@ -132,39 +132,40 @@ export class GuitarChords {
    * 绘制和弦名称
    */
   #drawChordName(data: GuitarChordsData) {
-    const { name, nameTextColor, nameFontSize, transpose, transposeTextColor } = data
+    const { name, nameTextColor, nameFontSize, transpose, transposeTextColor, fontFamily } = data
     const context = this.#context
     context.fillStyle = nameTextColor
-    context.font = `${nameFontSize}px Arial`
+    context.font = `${nameFontSize}px ${fontFamily}`
     context.textAlign = 'center'
     context.textBaseline = 'middle'
     context.fillText(name, this.width / (2 * this.#dpr), nameFontSize / 2)
+    // 使用measureText方法获取TextMetrics对象
+    const nameTextMetrics = context.measureText(name)
 
     // 变调符号绘制
     if (transpose !== 0) {
-      context.font = `${nameFontSize / 2}px Arial`
-      context.fillStyle = transposeTextColor
-      // 如果和弦名称以C、G、A开头，则变调符号绘制在和弦名称的左侧
-      if (['C', 'G', 'A'].includes(name.substring(0, 1))) {
-        context.textAlign = 'left'
-      }
-      // 在和弦名称的左上角绘制变调符号，如为1时#、-1时b
-      // 变调符号的尺寸为字体尺寸的1/2
       const transposeFontSize = nameFontSize / 2
+      context.font = `${transposeFontSize}px ${fontFamily}`
+      context.fillStyle = transposeTextColor
+      context.textAlign = 'right'
+
+      // 在和弦名称的左上角绘制变调符号，如为1时#、-1时b
       context.fillText(
-        transpose === 1 ? '#' : 'b',
-        this.width / (2 * this.#dpr) - nameFontSize * name.length / 2,
+        transpose === 1 ? '♯' : '♭',
+        this.width / (2 * this.#dpr) - nameTextMetrics.width / 2,
         transposeFontSize / 2,
       )
     }
   }
 
   #drawFingerPositions(data: GuitarChordsData) {
-    const { stringSpacing, fretsSpacing, stringLineWidth, fretsLineWidth, fingerRadius, spacing, matrix, nameFontSize, nutLineWidth, fingerNumberTextColor, fingerCircleColor } = data
+    const { stringSpacing, fretsSpacing, stringLineWidth, fretsLineWidth, fingerRadius, matrix, nutLineWidth, fingerNumberTextColor, fingerCircleColor, fontFamily, showFingerNumber } = data
     const context = this.#context
     context.fillStyle = fingerCircleColor
 
     const fontSize = fingerRadius * 1.5
+
+    const { top } = this.gridRect
 
     let fingerNumber = 0
 
@@ -173,19 +174,28 @@ export class GuitarChords {
         fingerNumber = matrix[fret][string]
         if (fingerNumber > 0) {
           const x = string * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
-          const y = (fret + 0.5) * (fretsSpacing + fretsLineWidth) + fretsLineWidth / 2 + nameFontSize + spacing + (nutLineWidth - fretsLineWidth)
+          const y = top / this.#dpr + nutLineWidth + (fretsSpacing + fretsLineWidth) * fret + fretsSpacing / 2
           context.fillStyle = fingerCircleColor
           context.beginPath()
           context.arc(x, y, fingerRadius, 0, Math.PI * 2)
           context.fill()
+
           // 绘制指法数字
+          if (!showFingerNumber) continue
+
           context.fillStyle = fingerNumberTextColor
-          context.font = `${fontSize}px Arial`
+          context.font = `${fontSize}px ${fontFamily}`
           context.textAlign = 'center'
           context.textBaseline = 'middle'
-          context.fillText(fingerNumber.toString(),
+
+          const fingerNo = String(fingerNumber)
+          const {
+            actualBoundingBoxAscent,
+            actualBoundingBoxDescent,
+          } = context.measureText(fingerNo)
+          context.fillText(fingerNo,
               x,
-              y + (nutLineWidth >= fretsLineWidth ? fretsLineWidth / 2 : nutLineWidth / 2)
+              y + Math.abs(actualBoundingBoxAscent - actualBoundingBoxDescent) / 2
             )
         }
       }
@@ -196,18 +206,20 @@ export class GuitarChords {
    * 绘制起始品位数
    */
   #drawStartFretNumbers(data: GuitarChordsData) {
-    const { nutLineWidth, fretsLineWidth, fretsSpacing, startFrets, nameFontSize, startFretsTextColor } = data
+    const { nutLineWidth, fretsSpacing, startFrets, nameFontSize, startFretsTextColor, fontFamily } = data
     if (startFrets <= 1) return
+
+    const { top } = this.gridRect
 
     const context = this.#context
     const fontSize = nameFontSize / 2
     context.fillStyle = startFretsTextColor
-    context.font = `italic ${fontSize}px Arial`
+    context.font = `italic ${fontSize}px ${fontFamily}`
     context.textAlign = 'left'
     context.textBaseline = 'middle'
     context.fillText(startFrets.toString(),
       0,
-      (this.gridRect.top / this.#dpr + fretsSpacing / 2 + fretsLineWidth * 1.5) + (nutLineWidth - fretsLineWidth)
+      (top / this.#dpr + nutLineWidth + fretsSpacing / 2)
     )
   }
 
