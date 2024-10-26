@@ -1,5 +1,11 @@
 # @guitar-chords/canvas
 
+<p>
+  <a href="https://npmcharts.com/compare/@guitar-chords/canvas?minimal=true"><img src="https://img.shields.io/npm/dm/@guitar-chords/canvas.svg?sanitize=true" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/@guitar-chords/canvas"><img src="https://img.shields.io/npm/v/@guitar-chords/canvas.svg?sanitize=true" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/@guitar-chords/canvas"><img src="https://img.shields.io/npm/l/@guitar-chords/canvas.svg?sanitize=true" alt="License"></a>
+</p>
+
 Use Canvas to generate guitar chords.
 
 ## Install

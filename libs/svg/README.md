@@ -1,5 +1,11 @@
 # @guitar-chords/svg
 
+<p>
+  <a href="https://npmcharts.com/compare/@guitar-chords/svg?minimal=true"><img src="https://img.shields.io/npm/dm/@guitar-chords/svg.svg?sanitize=true" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/@guitar-chords/svg"><img src="https://img.shields.io/npm/v/@guitar-chords/svg.svg?sanitize=true" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/@guitar-chords/svg"><img src="https://img.shields.io/npm/l/@guitar-chords/svg.svg?sanitize=true" alt="License"></a>
+</p>
+
 Use SVG to generate guitar chords.
 
 ## Install
