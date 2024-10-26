@@ -34,5 +34,6 @@ export const DEF_OPTIONS: GuitarChordsOptions = {
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
   ],
+  mergeFingerCircle: false,
   devicePixelRatio: window.devicePixelRatio || 1
 }

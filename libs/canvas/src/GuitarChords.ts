@@ -69,7 +69,10 @@ export class GuitarChords {
       stringLineWidth = defaultLineWidth,
       fingerCircleColor = defaultColor,
       startFretsTextColor = defaultColor,
-      transposeTextColor = nameTextColor
+      transposeTextColor = nameTextColor,
+      notesOutsideOfChords = {},
+      crossLineWidth = stringLineWidth,
+      crossLineColor = defaultColor,
     } = this.#options
     return {
       ...this.#options,
@@ -83,6 +86,9 @@ export class GuitarChords {
       fingerCircleColor,
       startFretsTextColor,
       transposeTextColor,
+      crossLineWidth,
+      crossLineColor,
+      notesOutsideOfChords,
     }
   }
 
@@ -125,6 +131,11 @@ export class GuitarChords {
 
     // 绘制和弦名称
     this.#drawChordName(data)
+
+    // 绘制和弦外音符号`x`
+    if (Object.keys(data.notesOutsideOfChords).length > 0) {
+      this.#drawNotesOutsideOfChords(data)
+    }
     return this
   }
 
@@ -159,13 +170,15 @@ export class GuitarChords {
   }
 
   #drawFingerPositions(data: GuitarChordsData) {
-    const { stringSpacing, fretsSpacing, stringLineWidth, fretsLineWidth, fingerRadius, matrix, nutLineWidth, fingerNumberTextColor, fingerCircleColor, fontFamily, showFingerNumber } = data
+    const { stringSpacing, fretsSpacing, stringLineWidth, fretsLineWidth, fingerRadius, matrix, nutLineWidth, fingerNumberTextColor, fingerCircleColor, fontFamily, showFingerNumber, mergeFingerCircle } = data
     const context = this.#context
     context.fillStyle = fingerCircleColor
 
     const fontSize = fingerRadius * 1.5
 
     const { top } = this.gridRect
+
+    const fingerCircleMap = new Map<number, { x: number, y: number }[]>()
 
     let fingerNumber = 0
 
@@ -175,20 +188,42 @@ export class GuitarChords {
         if (fingerNumber > 0) {
           const x = string * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
           const y = top / this.#dpr + nutLineWidth + (fretsSpacing + fretsLineWidth) * fret + fretsSpacing / 2
+          // 绘制指法圆点
           context.fillStyle = fingerCircleColor
           context.beginPath()
           context.arc(x, y, fingerRadius, 0, Math.PI * 2)
           context.fill()
 
-          // 绘制指法数字
-          if (!showFingerNumber) continue
+          // 大横按/小横按时，合并指法圆点
+          if (mergeFingerCircle) {
+            if (!fingerCircleMap.has(fingerNumber)) {
+              fingerCircleMap.set(fingerNumber, [])
+            }
+            const fingerCircleList = fingerCircleMap.get(fingerNumber)!
+            fingerCircleList.push({ x, y })
+            // 相同手指编号的最后一个指法圆点绘制
+            if (fingerCircleList.length > 1 && string === matrix[fret].lastIndexOf(fingerNumber)) {
+              context.beginPath()
+              context.moveTo(fingerCircleList[0].x, fingerCircleList[0].y)
+              context.lineTo(x, y)
+              context.strokeStyle = fingerCircleColor
+              context.lineWidth = fingerRadius * 2
+              context.stroke()
+            }
+          }
 
+          // showFingerNumber为false时，不绘制指法数字
+          // 或 大横按/小横按，且非最后一个指法圆点时，不绘制指法数字
+          if (!showFingerNumber || (mergeFingerCircle && string !== matrix[fret].lastIndexOf(fingerNumber))) continue
+
+          // 绘制指法数字
           context.fillStyle = fingerNumberTextColor
           context.font = `${fontSize}px ${fontFamily}`
           context.textAlign = 'center'
           context.textBaseline = 'middle'
 
           const fingerNo = String(fingerNumber)
+          // FIX: 使用actualBoundingBoxAscent和actualBoundingBoxDescent来计算指法数字的垂直居中位置偏移值
           const {
             actualBoundingBoxAscent,
             actualBoundingBoxDescent,
@@ -229,13 +264,16 @@ export class GuitarChords {
   #drawGrid(data: GuitarChordsData) {
     const { matrix, nutLineWidth, stringLineWidth, fretsLineWidth, stringSpacing, fretsSpacing, nutColor, stringColor, fretsColor, stringCount, spacing, nameFontSize } = data
     const context = this.#context
+
+    const topSpacing = nameFontSize + spacing
+
     /** 品位数 */
     const fretCount = matrix.length
     // 绘制竖线（代表琴弦）
     for (let i = 0; i < stringCount; i++) {
       const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
       context.beginPath()
-      context.moveTo(x, nameFontSize + spacing + Math.abs(nutLineWidth - fretsLineWidth))
+      context.moveTo(x, topSpacing + Math.abs(nutLineWidth - fretsLineWidth))
       context.lineTo(x, this.height)
       context.strokeStyle = stringColor
       context.lineWidth = stringLineWidth
@@ -243,10 +281,9 @@ export class GuitarChords {
     }
 
     // 绘制横线（代表品位）
-    const offsetY = (nutLineWidth - fretsLineWidth)
     for (let i = 0; i <= fretCount; i++) {
-      const y = i * (fretsSpacing + fretsLineWidth) + fretsLineWidth / 2 + nameFontSize + spacing +
-        (i === 0 ? 0 : offsetY)
+      // 绘制横行时以线条的中心为基准点，所以要减去线条宽度的一半
+      const y = i === 0 ? topSpacing + nutLineWidth / 2 : topSpacing + nutLineWidth + i * (fretsSpacing + fretsLineWidth) - fretsLineWidth / 2
       context.beginPath()
       context.moveTo(stringSpacing, y)
       context.lineTo(this.width / this.#dpr - stringSpacing, y)
@@ -254,5 +291,67 @@ export class GuitarChords {
       context.lineWidth = i === 0 ? nutLineWidth : fretsLineWidth
       context.stroke()
     }
+  }
+
+  #drawNotesOutsideOfChords(data: GuitarChordsData) {
+    const { stringLineWidth, stringSpacing, stringCount, notesOutsideOfChords } = data
+
+    const context = this.#context
+    // 绘制垂直交叉线段，长度为指法圆点直径
+    const y = this.gridRect.top / this.#dpr
+    for (let i = 0; i < stringCount; i++) {
+      if (!notesOutsideOfChords[stringCount - i]) continue
+      const crossCanvas = this.#drawCrossCanvas(data)
+      const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing - crossCanvas.width / 4
+      // 把crossCanvas缩小一半
+      context.drawImage(crossCanvas, x, y - crossCanvas.height / 2, crossCanvas.width / 2, crossCanvas.height / 2)
+    }
+  }
+
+  #drawCrossCanvas(data: GuitarChordsData) {
+    const { fingerRadius, crossLineColor, crossLineWidth, devicePixelRatio } = data
+    const diameter = fingerRadius * 2;
+    const width = diameter * devicePixelRatio;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+    canvas.width = canvas.height = width;
+
+    context.beginPath();
+    const startPoint1 = this.#getCrossPoint(diameter, -Math.PI / 4);
+    const endPoint1 = this.#getCrossPoint(diameter, 3 * Math.PI / 4);
+    context.moveTo(startPoint1.x * devicePixelRatio, startPoint1.y * devicePixelRatio);
+    context.lineTo(endPoint1.x * devicePixelRatio, endPoint1.y * devicePixelRatio);
+
+    const startPoint2 = this.#getCrossPoint(diameter, Math.PI / 4);
+    const endPoint2 = this.#getCrossPoint(diameter, -3 * Math.PI / 4);
+    context.moveTo(startPoint2.x * devicePixelRatio, startPoint2.y * devicePixelRatio);
+    context.lineTo(endPoint2.x * devicePixelRatio, endPoint2.y * devicePixelRatio);
+
+    context.strokeStyle = crossLineColor;
+    context.lineJoin = 'round';
+    context.lineWidth = crossLineWidth * devicePixelRatio;
+    context.stroke();
+
+    return canvas;
+  }
+
+  /**
+   * 从以直径为边长的矩形中，根据角度获取内切圆边与圆心为起点的直线的交叉点的坐标
+   * 并将交叉点坐标转换为以矩形左上角为原点的坐标
+   * @param diameter 圆的直径
+   * @param angle 角度（弧度）
+   * @returns 交点坐标
+   */
+  #getCrossPoint(diameter: number, angle: number): { x: number, y: number } {
+    const radius = diameter / 2
+    // 计算圆上的点
+    const x = radius * Math.cos(angle);
+    const y = radius * Math.sin(angle);
+
+    // 将坐标转换为以矩形左上角为原点的坐标系
+    return {
+      x: x + radius,
+      y: y + radius
+    };
   }
 }
