@@ -64,7 +64,10 @@ export class GuitarChords {
       stringLineWidth = defaultLineWidth,
       fingerCircleColor = defaultColor,
       startFretsTextColor = defaultColor,
-      transposeTextColor = nameTextColor
+      transposeTextColor = nameTextColor,
+      notesOutsideOfChords = {},
+      crossLineWidth = stringLineWidth,
+      crossLineColor = defaultColor,
     } = this.#options
     return {
       ...this.#options,
@@ -78,6 +81,9 @@ export class GuitarChords {
       fingerCircleColor,
       startFretsTextColor,
       transposeTextColor,
+      notesOutsideOfChords,
+      crossLineWidth,
+      crossLineColor,
     }
   }
 
@@ -108,6 +114,10 @@ export class GuitarChords {
     this.#drawFretNumbers(data)
     this.#drawFingerPositions(data)
     this.#drawChordName(data)
+    // 绘制和弦外音符号`x`
+    if (Object.keys(data.notesOutsideOfChords).length > 0) {
+      this.#drawNotesOutsideOfChords(data)
+    }
   }
 
   #drawChordName(data: GuitarChordsData) {
@@ -139,7 +149,7 @@ export class GuitarChords {
   }
 
   #drawFingerPositions(data: GuitarChordsData) {
-    const { stringSpacing, fingerCircleColor, stringLineWidth, fingerRadius, spacing, matrix, fretsSpacing, fretsLineWidth, nameFontSize, nutLineWidth, fingerNumberTextColor } = data
+    const { stringSpacing, fingerCircleColor, stringLineWidth, fingerRadius, spacing, matrix, fretsSpacing, fretsLineWidth, nameFontSize, nutLineWidth, fingerNumberTextColor, showFingerNumber } = data
     const fontSize = fingerRadius * 1.5
 
     for (let fret = 0; fret < matrix.length; fret++) {
@@ -154,6 +164,8 @@ export class GuitarChords {
           circle.setAttribute('r', `${fingerRadius}`)
           circle.setAttribute('fill', fingerCircleColor)
           this.#element.appendChild(circle)
+
+          if (!showFingerNumber) continue
 
           const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
           text.setAttribute('x', `${x}`)
@@ -215,6 +227,44 @@ export class GuitarChords {
       line.setAttribute('stroke', isNut ? nutColor : fretsColor)
       line.setAttribute('stroke-width', `${isNut ? nutLineWidth : fretsLineWidth}`)
       this.#element.appendChild(line)
+    }
+  }
+
+  #drawNotesOutsideOfChords(data: GuitarChordsData) {
+    const { stringLineWidth, stringSpacing, stringCount, notesOutsideOfChords, fingerRadius, crossLineColor, crossLineWidth } = data
+
+    // 绘制垂直交叉线段，长度为指法圆点直径
+    const y = this.gridRect.top
+    for (let i = 0; i < stringCount; i++) {
+      if (!notesOutsideOfChords[stringCount - i]) continue
+
+      const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing + fingerRadius / 2
+
+      const group = document.createElementNS("http://www.w3.org/2000/svg", "g")
+      group.setAttribute('transform', `translate(${x - fingerRadius}, ${y - fingerRadius * 1.2})`)
+
+      // 绘制交叉线
+      const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line")
+      line1.setAttribute('x1', '0')
+      line1.setAttribute('y1', '0')
+      line1.setAttribute('x2', `${fingerRadius}`)
+      line1.setAttribute('y2', `${fingerRadius}`)
+      line1.setAttribute('stroke', crossLineColor)
+      line1.setAttribute('stroke-width', `${crossLineWidth}`)
+      line1.setAttribute('stroke-linecap', 'round')
+      group.appendChild(line1)
+
+      const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line")
+      line2.setAttribute('x1', '0')
+      line2.setAttribute('y1', `${fingerRadius}`)
+      line2.setAttribute('x2', `${fingerRadius}`)
+      line2.setAttribute('y2', '0')
+      line2.setAttribute('stroke', crossLineColor)
+      line2.setAttribute('stroke-width', `${crossLineWidth}`)
+      line2.setAttribute('stroke-linecap', 'round')
+      group.appendChild(line2)
+
+      this.#element.appendChild(group)
     }
   }
 }

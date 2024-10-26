@@ -50,10 +50,21 @@ export interface GuitarChordsData {
   fingerCircleColor: string
   // 手指编号字体颜色，默认`#fff`
   fingerNumberTextColor: string
+  // 是否显示手指编号，默认true
+  showFingerNumber: boolean
   // 和弦的起始品位数，默认0
   startFrets: number
   // 起始品位数字体颜色
   startFretsTextColor: string
+  // 大横按/小横按时，是否合并指法圆点，默认false
+  mergeFingerCircle: boolean
+  // 否显示空弦和弦之外音的选项`{和弦序号（吉他的话为1-6弦）: true | false}`
+  // 用于是否在空弦列头部显示小叉`x`，true表示显示即为和弦之外的音，false则不显示
+  notesOutsideOfChords: Record<number, boolean>
+  // 和弦外音`x`的线条粗细，默认为琴弦线条宽度。其长度为指法圆点直径
+  crossLineWidth: number
+  // 和弦外音`x`的线条颜色
+  crossLineColor: string
   // 和弦指法和品位数量的矩阵（二维数组，行表示弦，列表示品位）
   matrix: number[][]
 }
@@ -67,5 +78,5 @@ type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
  * @type GuitarChordsOptions
  * 和弦配置选项
  */
-export type GuitarChordsOptions = Optional<GuitarChordsData, 'nameTextColor' | 'transposeTextColor' | 'nutLineWidth' | 'nutColor' | 'fretsColor' | 'fretsLineWidth' | 'stringColor' | 'stringLineWidth' | 'fingerCircleColor' | 'startFretsTextColor'>
+export type GuitarChordsOptions = Optional<GuitarChordsData, 'nameTextColor' | 'transposeTextColor' | 'nutLineWidth' | 'nutColor' | 'fretsColor' | 'fretsLineWidth' | 'stringColor' | 'stringLineWidth' | 'fingerCircleColor' | 'startFretsTextColor' | 'notesOutsideOfChords' | 'crossLineWidth' | 'crossLineColor'>
 

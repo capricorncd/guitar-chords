@@ -25,6 +25,7 @@ export const DEF_OPTIONS: GuitarChordsOptions = {
   fingerRadius: 15,
   // fingerCircleColor: '',
   fingerNumberTextColor: '#fff',
+  showFingerNumber: true,
   startFrets: 0,
   // startFretsTextColor: '',
   matrix: [
@@ -32,4 +33,5 @@ export const DEF_OPTIONS: GuitarChordsOptions = {
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
   ],
+  mergeFingerCircle: false,
 }
