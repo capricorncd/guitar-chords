@@ -2,7 +2,7 @@
   "name": "@guitar-chords/svg",
   "description": "Use SVG to generate guitar chords or edit it.",
   "authors": "Capricorncd",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "./dist/guitar-chords.umd.js",
   "module": "./dist/guitar-chords.es.js",
