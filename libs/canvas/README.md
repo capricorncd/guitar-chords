@@ -24,3 +24,13 @@ const guitarChords = new GuitarChords({
 
 document.body.appendChild(guitarChords.element)
 ```
+
+## Options
+
+See [types.d.ts](./src/types.d.ts).
+
+## API
+
+### `render(options?: Partial<GuitarChordsOptions>)`
+
+Re-render the guitar chord.

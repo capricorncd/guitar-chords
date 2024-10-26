@@ -2,7 +2,7 @@
  * Created by Capricorncd.
  * https://github.com/capricorncd
  */
-import type { GuitarChordsOptions } from "./types";
+import type { GuitarChordsData, GuitarChordsOptions } from "./types";
 import { DEF_OPTIONS } from "./const";
 
 
@@ -13,7 +13,6 @@ export class GuitarChords {
   #options: GuitarChordsOptions
   #element: HTMLCanvasElement
   #context: CanvasRenderingContext2D;
-  #nameFontSize: number;
   #dpr: number;
 
   constructor(options: Partial<GuitarChordsOptions> = {}) {
@@ -22,47 +21,89 @@ export class GuitarChords {
       ...options
     }
 
-    const { devicePixelRatio, nameFontSize } = this.#options
+    const { devicePixelRatio, autoRender } = this.#options
     this.#element = document.createElement('canvas') as HTMLCanvasElement
     this.#context = (this.#element as HTMLCanvasElement).getContext('2d') as CanvasRenderingContext2D
-    this.#nameFontSize = nameFontSize
     this.#dpr = devicePixelRatio
-    this.#draw()
+    if (autoRender) this.#draw()
   }
+
   get element() {
     return this.#element
   }
 
   get width() {
-    const { stringCount, lineSpacing, lineWidth } = this.#options
-    return (lineSpacing.x * (stringCount + 1) + lineWidth * stringCount) * this.#dpr
+    const { stringCount, stringSpacing, stringLineWidth } = this.data
+    return (stringSpacing * (stringCount + 1) + stringLineWidth * stringCount) * this.#dpr
   }
 
   get height() {
-    const { lineSpacing, lineWidth, matrix, spacing } = this.#options
-    return (lineSpacing.y * matrix.length + lineWidth * (matrix.length + 1) + this.#nameFontSize + spacing) * this.#dpr
+    const { nutLineWidth, fretsLineWidth, fretsSpacing, matrix, spacing, nameFontSize } = this.data
+    return (fretsSpacing * matrix.length + nutLineWidth + fretsLineWidth * matrix.length + nameFontSize + spacing) * this.#dpr
   }
 
   /**
    * 网格尺寸
    */
   get gridRect() {
-    const { lineSpacing, lineWidth, stringCount, matrix, spacing } = this.#options
+    const { stringLineWidth, stringSpacing, nutLineWidth, fretsSpacing, fretsLineWidth, stringCount, matrix, spacing, nameFontSize } = this.data
     return {
-      width: (lineSpacing.x * (stringCount - 1) + lineWidth * stringCount) * this.#dpr,
-      height: (lineSpacing.y * matrix.length + lineWidth * (matrix.length + 1)) * this.#dpr,
-      left: lineSpacing.x * this.#dpr,
-      top: (this.#nameFontSize + spacing) * this.#dpr,
-      right: (this.width - lineSpacing.x) * this.#dpr,
+      width: (stringSpacing * (stringCount - 1) + stringLineWidth * stringCount) * this.#dpr,
+      height: (fretsSpacing * matrix.length + nutLineWidth + fretsLineWidth * matrix.length) * this.#dpr,
+      left: stringSpacing * this.#dpr,
+      top: (nameFontSize + spacing) * this.#dpr,
+      right: (this.width - stringSpacing) * this.#dpr,
       bottom: this.height * this.#dpr,
     }
   }
 
-  get data() {
-    return {...this.#options}
+  get data(): GuitarChordsData {
+    const { defaultColor, defaultLineWidth} = this.#options
+    const {
+      nameTextColor = defaultColor,
+      nutLineWidth = defaultLineWidth,
+      nutColor = defaultColor,
+      fretsColor = defaultColor,
+      fretsLineWidth = defaultLineWidth,
+      stringColor = defaultColor,
+      stringLineWidth = defaultLineWidth,
+      fingerCircleColor = defaultColor,
+      startFretsTextColor = defaultColor,
+      transposeTextColor = nameTextColor
+    } = this.#options
+    return {
+      ...this.#options,
+      nameTextColor,
+      nutLineWidth,
+      nutColor,
+      fretsColor,
+      fretsLineWidth,
+      stringColor,
+      stringLineWidth,
+      fingerCircleColor,
+      startFretsTextColor,
+      transposeTextColor,
+    }
+  }
+
+  /**
+   * 重新绘制
+   * @param options 和弦配置选项
+   * @returns
+   */
+  render(options?: Partial<GuitarChordsOptions>) {
+    if (options) {
+      this.#options = {
+        ...this.#options,
+        ...options
+      }
+    }
+    this.#draw()
+    return this
   }
 
   #draw() {
+    const data = this.data
     const { width, height } = this
     this.#element.width = width
     this.#element.height = height
@@ -70,36 +111,58 @@ export class GuitarChords {
     this.#element.style.height = `${height / this.#dpr}px`
     this.#context.scale(this.#dpr, this.#dpr)
 
-    const { startFrets, matrix } = this.#options
+    // 清除画布
+    this.#context.clearRect(0, 0, width, height)
 
     // 绘制网格
-    this.#drawGrid()
+    this.#drawGrid(data)
 
-    // 绘制品位数
-    this.#drawFretNumbers(startFrets)
+    // 绘制起始品位数
+    this.#drawStartFretNumbers(data)
 
     // 绘制指法
-    this.#drawFingerPositions(matrix)
+    this.#drawFingerPositions(data)
 
     // 绘制和弦名称
-    this.#drawChordName()
+    this.#drawChordName(data)
     return this
   }
 
-  #drawChordName() {
-    const { name, color } = this.#options
+  /**
+   * 绘制和弦名称
+   */
+  #drawChordName(data: GuitarChordsData) {
+    const { name, nameTextColor, nameFontSize, transpose, transposeTextColor } = data
     const context = this.#context
-    context.fillStyle = color
-    context.font = `${this.#nameFontSize}px Arial`
+    context.fillStyle = nameTextColor
+    context.font = `${nameFontSize}px Arial`
     context.textAlign = 'center'
     context.textBaseline = 'middle'
-    context.fillText(name, this.width / (2 * this.#dpr), this.#nameFontSize / 2)
+    context.fillText(name, this.width / (2 * this.#dpr), nameFontSize / 2)
+
+    // 变调符号绘制
+    if (transpose !== 0) {
+      context.font = `${nameFontSize / 2}px Arial`
+      context.fillStyle = transposeTextColor
+      // 如果和弦名称以C、G、A开头，则变调符号绘制在和弦名称的左侧
+      if (['C', 'G', 'A'].includes(name.substring(0, 1))) {
+        context.textAlign = 'left'
+      }
+      // 在和弦名称的左上角绘制变调符号，如为1时#、-1时b
+      // 变调符号的尺寸为字体尺寸的1/2
+      const transposeFontSize = nameFontSize / 2
+      context.fillText(
+        transpose === 1 ? '#' : 'b',
+        this.width / (2 * this.#dpr) - nameFontSize * name.length / 2,
+        transposeFontSize / 2,
+      )
+    }
   }
 
-  #drawFingerPositions(matrix: number[][]) {
-    const { lineSpacing, color, lineWidth, fingerRadius, spacing } = this.#options
+  #drawFingerPositions(data: GuitarChordsData) {
+    const { stringSpacing, fretsSpacing, stringLineWidth, fretsLineWidth, fingerRadius, spacing, matrix, nameFontSize, nutLineWidth, fingerNumberTextColor, fingerCircleColor } = data
     const context = this.#context
-    context.fillStyle = color
+    context.fillStyle = fingerCircleColor
 
     const fontSize = fingerRadius * 1.5
 
@@ -109,20 +172,20 @@ export class GuitarChords {
       for (let string = 0; string < matrix[fret].length; string++) {
         fingerNumber = matrix[fret][string]
         if (fingerNumber > 0) {
-          const x = string * (lineSpacing.x + lineWidth) + lineWidth / 2 + lineSpacing.x
-          const y = (fret + 0.5) * (lineSpacing.y + lineWidth) + lineWidth / 2 + this.#nameFontSize + spacing
-          context.fillStyle = color
+          const x = string * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
+          const y = (fret + 0.5) * (fretsSpacing + fretsLineWidth) + fretsLineWidth / 2 + nameFontSize + spacing + (nutLineWidth - fretsLineWidth)
+          context.fillStyle = fingerCircleColor
           context.beginPath()
           context.arc(x, y, fingerRadius, 0, Math.PI * 2)
           context.fill()
           // 绘制指法数字
-          context.fillStyle = '#ffffff'
+          context.fillStyle = fingerNumberTextColor
           context.font = `${fontSize}px Arial`
           context.textAlign = 'center'
           context.textBaseline = 'middle'
           context.fillText(fingerNumber.toString(),
               x,
-              y + lineWidth / 2
+              y + (nutLineWidth >= fretsLineWidth ? fretsLineWidth / 2 : nutLineWidth / 2)
             )
         }
       }
@@ -130,51 +193,53 @@ export class GuitarChords {
   }
 
   /**
-   * 绘制品位数
-   * @param startFrets 起始品位
+   * 绘制起始品位数
    */
-  #drawFretNumbers(startFrets: number) {
-    if (!startFrets) return
-    const { color, lineWidth, lineSpacing } = this.#options
+  #drawStartFretNumbers(data: GuitarChordsData) {
+    const { nutLineWidth, fretsLineWidth, fretsSpacing, startFrets, nameFontSize, startFretsTextColor } = data
+    if (startFrets <= 1) return
+
     const context = this.#context
-    const fontSize = this.#nameFontSize / 2
-    context.fillStyle = color
+    const fontSize = nameFontSize / 2
+    context.fillStyle = startFretsTextColor
     context.font = `italic ${fontSize}px Arial`
     context.textAlign = 'left'
     context.textBaseline = 'middle'
     context.fillText(startFrets.toString(),
       0,
-      (this.gridRect.top / this.#dpr + lineSpacing.y / 2 + lineWidth * 1.5)
+      (this.gridRect.top / this.#dpr + fretsSpacing / 2 + fretsLineWidth * 1.5) + (nutLineWidth - fretsLineWidth)
     )
   }
 
   /**
    * 绘制网格
    */
-  #drawGrid() {
-    const { matrix, lineWidth, lineSpacing, color, stringCount, spacing } = this.#options
+  #drawGrid(data: GuitarChordsData) {
+    const { matrix, nutLineWidth, stringLineWidth, fretsLineWidth, stringSpacing, fretsSpacing, nutColor, stringColor, fretsColor, stringCount, spacing, nameFontSize } = data
     const context = this.#context
     /** 品位数 */
     const fretCount = matrix.length
     // 绘制竖线（代表琴弦）
     for (let i = 0; i < stringCount; i++) {
-      const x = i * (lineSpacing.x + lineWidth) + lineWidth / 2 + lineSpacing.x
+      const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
       context.beginPath()
-      context.moveTo(x, this.#nameFontSize + spacing)
+      context.moveTo(x, nameFontSize + spacing + Math.abs(nutLineWidth - fretsLineWidth))
       context.lineTo(x, this.height)
-      context.strokeStyle = color
-      context.lineWidth = lineWidth
+      context.strokeStyle = stringColor
+      context.lineWidth = stringLineWidth
       context.stroke()
     }
 
     // 绘制横线（代表品位）
+    const offsetY = (nutLineWidth - fretsLineWidth)
     for (let i = 0; i <= fretCount; i++) {
-      const y = i * (lineSpacing.y + lineWidth) + lineWidth / 2 + this.#nameFontSize + spacing
+      const y = i * (fretsSpacing + fretsLineWidth) + fretsLineWidth / 2 + nameFontSize + spacing +
+        (i === 0 ? 0 : offsetY)
       context.beginPath()
-      context.moveTo(lineSpacing.x, y)
-      context.lineTo(this.width / this.#dpr - lineSpacing.x, y)
-      context.strokeStyle = color
-      context.lineWidth = lineWidth
+      context.moveTo(stringSpacing, y)
+      context.lineTo(this.width / this.#dpr - stringSpacing, y)
+      context.strokeStyle = i === 0 ? nutColor : fretsColor
+      context.lineWidth = i === 0 ? nutLineWidth : fretsLineWidth
       context.stroke()
     }
   }
