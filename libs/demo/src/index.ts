@@ -3,7 +3,7 @@ import { GuitarChords as SvgGuitarChords } from '@guitar-chords/svg'
 
 const chordsList = [
   {
-    name: 'C',
+    name: 'Cmaj7',
     nutLineWidth: 10,
     nameTextColor: '#f30',
     nutColor: '#f30',
@@ -59,7 +59,10 @@ const chordsList = [
       [0, 0, 0, 0, 1, 0],
       [0, 0, 2, 3, 0, 0],
       [0, 0, 0, 0, 0, 0],
-    ]
+    ],
+    notesOutsideOfChords: {
+      6: true,
+    }
   },
   {
     name: 'G7',
@@ -96,8 +99,8 @@ const chordsList = [
     transposeTextColor: '#f30',
     matrix: [
       [1, 1, 0, 0, 0, 1],
-      [0, 0, 0, 0, 1, 0],
-      [0, 0, 2, 3, 0, 0],
+      [0, 0, 0, 0, 2, 0],
+      [0, 0, 3, 4, 0, 0],
     ]
   },
   {
@@ -105,10 +108,36 @@ const chordsList = [
     startFrets: 2,
     transpose: -1,
     startFretsTextColor: '#f30',
+    showFingerNumber: false,
+    mergeFingerCircle: true,
     matrix: [
       [1, 1, 0, 0, 0, 1],
       [0, 0, 0, 0, 0, 0],
       [0, 0, 2, 3, 4, 0],
+    ]
+  },
+  {
+    name: 'C3',
+    startFrets: 3,
+    startFretsTextColor: '#f30',
+    nutLineWidth: 10,
+    mergeFingerCircle: true,
+    matrix: [
+      [1, 1, 0, 0, 0, 1],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 3, 3, 3, 0],
+    ]
+  },
+  {
+    name: 'Fmaj7',
+    startFrets: 5,
+    startFretsTextColor: '#f30',
+    nutLineWidth: 10,
+    mergeFingerCircle: true,
+    matrix: [
+      [0, 0, 0, 1, 1, 1],
+      [0, 0, 2, 0, 0, 0],
+      [0, 3, 0, 0, 0, 0],
     ]
   },
 ]
@@ -117,12 +146,51 @@ const chordsList = [
 
   const canvasTitle = document.createElement('h1')
   canvasTitle.textContent = 'Canvas'
-app.append(canvasTitle)
+  app.append(canvasTitle)
 
   app.append(...chordsList.map(v => new CanvasGuitarChords(v).element))
+
+  const testCanvas = new CanvasGuitarChords({
+    ...chordsList[0],
+    autoRender: false,
+  })
+  console.log(testCanvas.data)
+
+  app.append(testCanvas.element)
+
+  testCanvas.render({
+    name: 'C',
+    transpose: 1,
+    matrix: [
+      [1, 1, 0, 1, 1, 1],
+      [0, 0, 0, 0, 2, 0],
+      [0, 0, 3, 0, 0, 0],
+      [0, 4, 0, 0, 0, 0],
+    ]
+  })
+
 
 const svgTitle = document.createElement('h1')
 svgTitle.textContent = 'SVG'
 app.append(svgTitle)
 
 app.append(...chordsList.map(v => new SvgGuitarChords(v).element))
+
+const testSvg = new CanvasGuitarChords({
+  ...chordsList[0],
+  autoRender: false,
+})
+console.log(testSvg.data)
+
+app.append(testSvg.element)
+
+testSvg.render({
+  name: 'C',
+  transpose: 1,
+  matrix: [
+    [1, 1, 0, 1, 1, 1],
+    [0, 0, 0, 0, 2, 0],
+    [0, 0, 3, 0, 0, 0],
+    [0, 4, 0, 0, 0, 0],
+  ]
+})
