@@ -169,7 +169,7 @@ export class GuitarChords {
       const nameMaxWidth = this.gridRect.width
       const { width } = nameTspan.getBBox()
       if (width > nameMaxWidth) {
-        // Safari Version 17.4.1 不支持以下属性
+        // TODO: Safari Version 17.4.1 不支持以下属性
         nameTspan.setAttribute('textLength', String(nameMaxWidth))
         nameTspan.setAttribute('lengthAdjust', 'spacingAndGlyphs')
       }
