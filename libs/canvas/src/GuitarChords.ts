@@ -70,8 +70,9 @@ export class GuitarChords {
       fingerCircleColor = defaultColor,
       startFretsTextColor = defaultColor,
       transposeTextColor = nameTextColor,
+      showNotesOutsideOfChords,
       notesOutsideOfChords = {},
-      crossLineWidth = stringLineWidth,
+      crossLineWidth = Math.min(stringLineWidth, fretsLineWidth),
       crossLineColor = defaultColor,
     } = this.#options
     return {
@@ -86,9 +87,10 @@ export class GuitarChords {
       fingerCircleColor,
       startFretsTextColor,
       transposeTextColor,
+      notesOutsideOfChords,
+      showNotesOutsideOfChords: showNotesOutsideOfChords || Object.keys(notesOutsideOfChords).length > 0,
       crossLineWidth,
       crossLineColor,
-      notesOutsideOfChords,
     }
   }
 
@@ -298,7 +300,7 @@ export class GuitarChords {
 
     const context = this.#context
 
-    const diameter = fingerRadius * 1.5;
+    const diameter = fingerRadius * 1.25;
 
     // 绘制垂直交叉线段，长度为指法圆点直径
     const y = this.gridRect.top / devicePixelRatio
@@ -313,7 +315,7 @@ export class GuitarChords {
         // 绘制空弦和弦音圆圈
         context.fillStyle = crossLineColor
         context.beginPath()
-        context.arc(x, y - diameter / 2, (diameter - crossLineWidth) / 2, 0, Math.PI * 2)
+        context.arc(x, y - diameter / 2, (diameter) / 2, 0, Math.PI * 2)
         context.lineWidth = crossLineWidth
         context.strokeStyle = crossLineColor
         context.stroke();

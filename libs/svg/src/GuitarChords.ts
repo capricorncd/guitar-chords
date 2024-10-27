@@ -66,7 +66,8 @@ export class GuitarChords {
       startFretsTextColor = defaultColor,
       transposeTextColor = nameTextColor,
       notesOutsideOfChords = {},
-      crossLineWidth = stringLineWidth,
+      showNotesOutsideOfChords,
+      crossLineWidth = Math.min(stringLineWidth, fretsLineWidth),
       crossLineColor = defaultColor,
     } = this.#options
     return {
@@ -82,6 +83,7 @@ export class GuitarChords {
       startFretsTextColor,
       transposeTextColor,
       notesOutsideOfChords,
+      showNotesOutsideOfChords: showNotesOutsideOfChords || Object.keys(notesOutsideOfChords).length > 0,
       crossLineWidth,
       crossLineColor,
     }

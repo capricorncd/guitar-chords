@@ -1,9 +1,9 @@
-import { GuitarChords as CanvasGuitarChords } from '@guitar-chords/canvas'
+import { GuitarChords as CanvasGuitarChords, type GuitarChordsOptions } from '@guitar-chords/canvas'
 import { GuitarChords as SvgGuitarChords } from '@guitar-chords/svg'
 
-const chordsList = [
+const chordsList: Partial<GuitarChordsOptions>[] = [
   {
-    name: 'Cmaj7',
+    name: 'C',
     nutLineWidth: 10,
     nameTextColor: '#f30',
     nutColor: '#f30',
@@ -40,7 +40,7 @@ const chordsList = [
     stringLineWidth: 12,
     fingerCircleColor: '#f30',
     matrix: [
-      [1, 1, 0, 0, 0, 1],
+      [1, 0, 0, 0, 1, 1],
       [0, 0, 0, 2, 0, 0],
       [0, 3, 4, 0, 0, 0],
     ]
@@ -51,7 +51,8 @@ const chordsList = [
       [0, 0, 0, 0, 0, 0],
       [0, 2, 0, 0, 0, 0],
       [3, 0, 0, 0, 0, 4],
-    ]
+    ],
+    showNotesOutsideOfChords: true,
   },
   {
     name: 'Am',
@@ -63,7 +64,6 @@ const chordsList = [
     notesOutsideOfChords: {
       6: true,
     },
-    showNotesOutsideOfChords: true,
   },
   {
     name: 'G7',
@@ -141,6 +141,20 @@ const chordsList = [
       [0, 3, 0, 0, 0, 0],
     ]
   },
+  {
+    name: 'Cm7-5',
+    startFrets: 3,
+    nutLineWidth: 10,
+    mergeFingerCircle: true,
+    matrix: [
+      [0, 0, 0, 0, 0, 0],
+      [0, 1, 0, 2, 0, 0],
+      [0, 0, 3, 0, 4, 0],
+    ],
+    notesOutsideOfChords: {
+      6: true
+    }
+  },
 ]
 
   const app = document.getElementById('app') as HTMLDivElement
@@ -151,6 +165,21 @@ const chordsList = [
 
   app.append(...chordsList.map(v => new CanvasGuitarChords(v).element))
 
+  const cSharpData: Partial<GuitarChordsOptions> = {
+    name: 'C',
+    transpose: 1,
+    matrix: [
+      [0, 0, 0, 1, 0, 1],
+      [0, 0, 0, 0, 2, 0],
+      [0, 0, 3, 0, 0, 0],
+      [0, 4, 0, 0, 0, 0],
+    ],
+    notesOutsideOfChords: {
+      6: true
+    },
+    mergeFingerCircle: true,
+  }
+
   const testCanvas = new CanvasGuitarChords({
     ...chordsList[0],
     autoRender: false,
@@ -159,16 +188,7 @@ const chordsList = [
 
   app.append(testCanvas.element)
 
-  testCanvas.render({
-    name: 'C',
-    transpose: 1,
-    matrix: [
-      [1, 1, 0, 1, 1, 1],
-      [0, 0, 0, 0, 2, 0],
-      [0, 0, 3, 0, 0, 0],
-      [0, 4, 0, 0, 0, 0],
-    ]
-  })
+  testCanvas.render(cSharpData)
 
 
 const svgTitle = document.createElement('h1')
@@ -185,13 +205,4 @@ console.log(testSvg.data)
 
 app.append(testSvg.element)
 
-testSvg.render({
-  name: 'C',
-  transpose: 1,
-  matrix: [
-    [1, 1, 0, 1, 1, 1],
-    [0, 0, 0, 0, 2, 0],
-    [0, 0, 3, 0, 0, 0],
-    [0, 4, 0, 0, 0, 0],
-  ]
-})
+testSvg.render(cSharpData)
