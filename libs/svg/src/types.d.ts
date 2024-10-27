@@ -24,6 +24,8 @@ export interface GuitarChordsData {
   nameFontSize: number,
   // 和弦名称颜色
   nameTextColor: string
+  // 和弦名称字母之间的间距，默认0
+  nameLetterSpacing: number
   // 和弦名称与和弦网格之间的间距
   spacing: number
   // 琴枕线条宽度（默认为lineWidth的值）
@@ -48,14 +50,16 @@ export interface GuitarChordsData {
   fingerRadius: number
   // 指法圆点颜色
   fingerCircleColor: string
-  // 手指编号字体颜色，默认`#fff`
-  fingerNumberTextColor: string
   // 是否显示手指编号，默认true
   showFingerNumber: boolean
+  // 手指编号字体颜色，默认`#fff`
+  fingerNumberTextColor: string
   // 和弦的起始品位数，默认0
   startFrets: number
   // 起始品位数字体颜色
   startFretsTextColor: string
+  // 和弦指法和品位数量的矩阵（二维数组，行表示弦，列表示品位）
+  matrix: number[][]
   // 大横按/小横按时，是否合并指法圆点，默认false
   mergeFingerCircle: boolean
   // 用于是否在空弦列头部显示小叉`x/o`，默认为false
@@ -66,18 +70,26 @@ export interface GuitarChordsData {
   crossLineWidth: number
   // 和弦外音`x`的线条颜色
   crossLineColor: string
-  // 和弦指法和品位数量的矩阵（二维数组，行表示弦，列表示品位）
-  matrix: number[][]
 }
 
 /**
- * Optional
+ * PickOptional
  */
-type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+type PickOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
+/**
+ * OmitOptional
+ */
+type OmitOptional<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>
 
 /**
  * @type GuitarChordsOptions
  * 和弦配置选项
  */
-export type GuitarChordsOptions = Optional<GuitarChordsData, 'nameTextColor' | 'transposeTextColor' | 'nutLineWidth' | 'nutColor' | 'fretsColor' | 'fretsLineWidth' | 'stringColor' | 'stringLineWidth' | 'fingerCircleColor' | 'startFretsTextColor' | 'notesOutsideOfChords' | 'crossLineWidth' | 'crossLineColor'>
+export type GuitarChordsOptions = OmitOptional<GuitarChordsData, 'name' | 'matrix'>
+
+/**
+ * DefaultOptions
+ */
+export type DefaultOptions = PickOptional<GuitarChordsData, 'nameTextColor' | 'transposeTextColor' | 'nutLineWidth' | 'nutColor' | 'fretsColor' | 'fretsLineWidth' | 'stringColor' | 'stringLineWidth' | 'fingerCircleColor' | 'startFretsTextColor' | 'notesOutsideOfChords' | 'crossLineWidth' | 'crossLineColor' | 'nameLetterSpacing'>
 

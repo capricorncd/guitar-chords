@@ -2,7 +2,7 @@
  * Created by Capricorncd.
  * https://github.com/capricorncd
  */
-import type { GuitarChordsOptions, GuitarChordsData } from "./types";
+import type { GuitarChordsOptions, GuitarChordsData, DefaultOptions } from "./types";
 import { DEF_OPTIONS } from "./const";
 import { createSvgElement } from './helpers'
 
@@ -10,7 +10,7 @@ import { createSvgElement } from './helpers'
  * @document 吉他和弦
  */
 export class GuitarChords {
-  #options: GuitarChordsOptions
+  #options: DefaultOptions
   #element: SVGElement
 
   constructor(options: Partial<GuitarChordsOptions> = {}) {
@@ -70,6 +70,7 @@ export class GuitarChords {
       showNotesOutsideOfChords,
       crossLineWidth = Math.min(stringLineWidth, fretsLineWidth),
       crossLineColor = defaultColor,
+      nameLetterSpacing = 0,
     } = this.#options
     return {
       ...this.#options,
@@ -87,6 +88,7 @@ export class GuitarChords {
       showNotesOutsideOfChords: showNotesOutsideOfChords || Object.keys(notesOutsideOfChords).length > 0,
       crossLineWidth,
       crossLineColor,
+      nameLetterSpacing,
     }
   }
 
@@ -102,6 +104,7 @@ export class GuitarChords {
         ...options
       }
     }
+    this.#element.innerHTML = ''
     this.#draw()
     return this
   }
@@ -124,34 +127,48 @@ export class GuitarChords {
   }
 
   #drawChordName(data: GuitarChordsData) {
-    const { name, nameTextColor, nameFontSize, transposeTextColor, transpose } = data
+    const { name, nameTextColor, nameFontSize, transposeTextColor, transpose, nameLetterSpacing } = data
+    // 是否变调
+    const hasTranspose = !!transpose
+
     const text = createSvgElement("text", {
-      'x': this.width / 2,
+      // 变调时，x向左偏移1/4文字大小(1/2变调符号字体大小)
+      'x': this.width / 2 - (hasTranspose ? nameFontSize / 4 : 0),
       'y': nameFontSize / 2,
       'fill': nameTextColor,
       'font-size': nameFontSize,
       'text-anchor': 'middle',
-      'dominant-baseline': 'middle',
+      // central使变调符号可以正常显示
+      'dominant-baseline': 'central',
     })
-
-    text.textContent = name
     this.#element.appendChild(text)
 
-    // 在和弦名称的左上角绘制变调符号
-    if (transpose) {
-      const transposeFontSize = nameFontSize / 2
-      const isRisingPitch = transpose === 1
-      const text = createSvgElement("text", {
-        'x': `${this.width / 2 - nameFontSize * name.length / 2}`,
-        'y': `${transposeFontSize * 0.5}`,
-        'fill': transposeTextColor,
-        'font-size': `${transposeFontSize}`,
-        'text-anchor': isRisingPitch ? 'middle' : 'start',
-        'dominant-baseline': 'middle',
-      })
-      text.textContent = isRisingPitch ? '♯' : '♭'
-      this.#element.appendChild(text)
+    // 变调符号
+    if (hasTranspose) {
+      text.append(createSvgElement("tspan", {
+          fill: transposeTextColor,
+          style: `font-size:${nameFontSize / 2}px;`,
+          'baseline-shift': 'super',
+        },
+        transpose === 1 ? '♯' : '♭'),
+      )
     }
+
+    // 和弦名称
+    const nameTspan = createSvgElement<SVGTextElement>("tspan", {
+      style: `letter-spacing:${nameLetterSpacing}px;`,
+    }, name)
+    text.append(nameTspan)
+
+    // TODO: 和弦名称是否超出了网格的宽度
+    setTimeout(() => {
+      const nameMaxWidth = this.gridRect.width
+      const { width } = nameTspan.getBBox()
+      if (width > nameMaxWidth) {
+        nameTspan.setAttribute('textLength', String(nameMaxWidth))
+        nameTspan.setAttribute('lengthAdjust', 'spacingAndGlyphs')
+      }
+    }, 0)
   }
 
   #drawFingerPositions(data: GuitarChordsData) {
@@ -223,8 +240,7 @@ export class GuitarChords {
       'font-size': `${fontSize}`,
       'text-anchor': 'middle',
       'dominant-baseline': 'central',
-    })
-    text.textContent = fingerNumber.toString()
+    }, fingerNumber)
     this.#element.appendChild(text)
   }
 
@@ -239,8 +255,7 @@ export class GuitarChords {
       'fill': startFretsTextColor,
       'font-size': `${fontSize}`,
       'font-style': 'italic',
-    })
-    text.textContent = startFrets.toString()
+    }, startFrets)
     this.#element.appendChild(text)
   }
 

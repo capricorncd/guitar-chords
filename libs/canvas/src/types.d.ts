@@ -60,8 +60,6 @@ export interface GuitarChordsData {
   startFretsTextColor: string
   // 和弦指法和品位数量的矩阵（二维数组，行表示弦，列表示品位）
   matrix: number[][]
-  // 字体，默认`Arial`
-  fontFamily: string
   // 大横按/小横按时，是否合并指法圆点，默认false
   mergeFingerCircle: boolean
   // 用于是否在空弦列头部显示小叉`x/o`，默认为false
@@ -72,6 +70,8 @@ export interface GuitarChordsData {
   crossLineWidth: number
   // 和弦外音`x`的线条颜色
   crossLineColor: string
+  // 字体，默认`Arial`
+  fontFamily: string
   // 设备像素比
   devicePixelRatio: number
 }

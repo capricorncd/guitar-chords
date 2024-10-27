@@ -2,9 +2,9 @@
  * Created by Capricorncd.
  * https://github.com/capricorncd
  */
-import type { GuitarChordsOptions } from "./types";
+import type { DefaultOptions } from "./types";
 
-export const DEF_OPTIONS: GuitarChordsOptions = {
+export const DEF_OPTIONS: DefaultOptions = {
   autoRender: true,
   defaultColor: '#000',
   defaultLineWidth: 4,
@@ -12,7 +12,7 @@ export const DEF_OPTIONS: GuitarChordsOptions = {
   name: '',
   nameFontSize: 50,
   // nameTextColor: '',
-  spacing: 12,
+  spacing: 18,
   // nutLineWidth: LINE_WIDTH,
   // nutColor: '',
   fretsSpacing: 50,

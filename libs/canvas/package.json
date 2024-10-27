@@ -2,7 +2,7 @@
   "name": "@guitar-chords/canvas",
   "description": "Use Canvas to generate guitar chords or edit it.",
   "authors": "Capricorncd",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "main": "./dist/guitar-chords.umd.js",
   "module": "./dist/guitar-chords.es.js",

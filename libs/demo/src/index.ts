@@ -1,7 +1,7 @@
 import { GuitarChords as CanvasGuitarChords, type GuitarChordsOptions } from '@guitar-chords/canvas'
 import { GuitarChords as SvgGuitarChords } from '@guitar-chords/svg'
 
-const chordsList: Partial<GuitarChordsOptions>[] = [
+const chordsList: GuitarChordsOptions[] = [
   {
     name: 'C',
     nutLineWidth: 10,
@@ -144,8 +144,10 @@ const chordsList: Partial<GuitarChordsOptions>[] = [
   {
     name: 'Cm7-5',
     startFrets: 3,
+    transpose: 1,
     nutLineWidth: 10,
     mergeFingerCircle: true,
+    nameLetterSpacing: 12,
     matrix: [
       [0, 0, 0, 0, 0, 0],
       [0, 1, 0, 2, 0, 0],
@@ -165,7 +167,7 @@ const chordsList: Partial<GuitarChordsOptions>[] = [
 
   app.append(...chordsList.map(v => new CanvasGuitarChords(v).element))
 
-  const cSharpData: Partial<GuitarChordsOptions> = {
+  const cSharpData: GuitarChordsOptions = {
     name: 'C',
     transpose: 1,
     matrix: [
@@ -186,9 +188,8 @@ const chordsList: Partial<GuitarChordsOptions>[] = [
   })
   console.log(testCanvas.data)
 
-  app.append(testCanvas.element)
-
-  testCanvas.render(cSharpData)
+  testCanvas.render()
+  app.append(testCanvas.render(cSharpData).element)
 
 
 const svgTitle = document.createElement('h1')
@@ -197,12 +198,12 @@ app.append(svgTitle)
 
 app.append(...chordsList.map(v => new SvgGuitarChords(v).element))
 
-const testSvg = new CanvasGuitarChords({
+const testSvg = new SvgGuitarChords({
   ...chordsList[0],
   autoRender: false,
 })
 console.log(testSvg.data)
 
-app.append(testSvg.element)
+testSvg.render()
+app.append(testSvg.render({ ...cSharpData, name: 'Test'}).element)
 
-testSvg.render(cSharpData)
