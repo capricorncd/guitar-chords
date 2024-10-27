@@ -130,16 +130,18 @@ export class GuitarChords {
     const { name, nameTextColor, nameFontSize, transposeTextColor, transpose, nameLetterSpacing } = data
     // 是否变调
     const hasTranspose = !!transpose
+    // 变调符号字体大小
+    const transposeFontSize = nameFontSize / 2
 
     const text = createSvgElement("text", {
       // 变调时，x向左偏移1/4文字大小(1/2变调符号字体大小)
-      'x': this.width / 2 - (hasTranspose ? nameFontSize / 4 : 0),
-      'y': nameFontSize / 2,
+      'x': this.width / 2 - (hasTranspose ? transposeFontSize / 2 : 0),
+      // y偏移字体大小的20%，使变调符号可以全部显示
+      'y': nameFontSize / 2 + transposeFontSize * 0.2,
       'fill': nameTextColor,
       'font-size': nameFontSize,
       'text-anchor': 'middle',
-      // central使变调符号可以正常显示
-      'dominant-baseline': 'central',
+      'dominant-baseline': 'middle',
     })
     this.#element.appendChild(text)
 
@@ -147,7 +149,8 @@ export class GuitarChords {
     if (hasTranspose) {
       text.append(createSvgElement("tspan", {
           fill: transposeTextColor,
-          style: `font-size:${nameFontSize / 2}px;`,
+          style: `font-size: ${transposeFontSize}px;`,
+          'alignment-baseline': "middle",
           'baseline-shift': 'super',
         },
         transpose === 1 ? '♯' : '♭'),
@@ -157,6 +160,7 @@ export class GuitarChords {
     // 和弦名称
     const nameTspan = createSvgElement<SVGTextElement>("tspan", {
       style: `letter-spacing:${nameLetterSpacing}px;`,
+      'alignment-baseline': "middle",
     }, name)
     text.append(nameTspan)
 
@@ -165,6 +169,7 @@ export class GuitarChords {
       const nameMaxWidth = this.gridRect.width
       const { width } = nameTspan.getBBox()
       if (width > nameMaxWidth) {
+        // Safari Version 17.4.1 不支持以下属性
         nameTspan.setAttribute('textLength', String(nameMaxWidth))
         nameTspan.setAttribute('lengthAdjust', 'spacingAndGlyphs')
       }
