@@ -114,8 +114,8 @@ export class GuitarChords {
     this.#drawFretNumbers(data)
     this.#drawFingerPositions(data)
     this.#drawChordName(data)
-    // 绘制和弦外音符号`x`
-    if (Object.keys(data.notesOutsideOfChords).length > 0) {
+    // 绘制和弦外音符号`x/o`
+    if (data.showNotesOutsideOfChords) {
       this.#drawNotesOutsideOfChords(data)
     }
   }
@@ -274,35 +274,54 @@ export class GuitarChords {
     // 绘制垂直交叉线段，长度为指法圆点直径
     const y = this.gridRect.top
     for (let i = 0; i < stringCount; i++) {
-      if (!notesOutsideOfChords[stringCount - i]) continue
+      if (!this.#isOpenString(i, data)) continue
+      const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
+      if (notesOutsideOfChords[stringCount - i]) {
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g")
+        group.setAttribute('transform', `translate(${x - fingerRadius / 2}, ${y - fingerRadius * 1.2})`)
 
-      const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing + fingerRadius / 2
+        // 绘制交叉线
+        const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line")
+        line1.setAttribute('x1', '0')
+        line1.setAttribute('y1', '0')
+        line1.setAttribute('x2', `${fingerRadius}`)
+        line1.setAttribute('y2', `${fingerRadius}`)
+        line1.setAttribute('stroke', crossLineColor)
+        line1.setAttribute('stroke-width', `${crossLineWidth}`)
+        line1.setAttribute('stroke-linecap', 'round')
+        group.appendChild(line1)
 
-      const group = document.createElementNS("http://www.w3.org/2000/svg", "g")
-      group.setAttribute('transform', `translate(${x - fingerRadius}, ${y - fingerRadius * 1.2})`)
+        const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line")
+        line2.setAttribute('x1', '0')
+        line2.setAttribute('y1', `${fingerRadius}`)
+        line2.setAttribute('x2', `${fingerRadius}`)
+        line2.setAttribute('y2', '0')
+        line2.setAttribute('stroke', crossLineColor)
+        line2.setAttribute('stroke-width', `${crossLineWidth}`)
+        line2.setAttribute('stroke-linecap', 'round')
+        group.appendChild(line2)
 
-      // 绘制交叉线
-      const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line")
-      line1.setAttribute('x1', '0')
-      line1.setAttribute('y1', '0')
-      line1.setAttribute('x2', `${fingerRadius}`)
-      line1.setAttribute('y2', `${fingerRadius}`)
-      line1.setAttribute('stroke', crossLineColor)
-      line1.setAttribute('stroke-width', `${crossLineWidth}`)
-      line1.setAttribute('stroke-linecap', 'round')
-      group.appendChild(line1)
-
-      const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line")
-      line2.setAttribute('x1', '0')
-      line2.setAttribute('y1', `${fingerRadius}`)
-      line2.setAttribute('x2', `${fingerRadius}`)
-      line2.setAttribute('y2', '0')
-      line2.setAttribute('stroke', crossLineColor)
-      line2.setAttribute('stroke-width', `${crossLineWidth}`)
-      line2.setAttribute('stroke-linecap', 'round')
-      group.appendChild(line2)
-
-      this.#element.appendChild(group)
+        this.#element.appendChild(group)
+      } else {
+        const radius = fingerRadius * 0.75
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+        circle.setAttribute('cx', `${x}`)
+        circle.setAttribute('cy', `${y - radius * 1.1}`)
+        circle.setAttribute('r', `${radius}`)
+        circle.setAttribute('fill', 'transparent')
+        circle.setAttribute('stroke', crossLineColor)
+        circle.setAttribute('stroke-width', `${crossLineWidth}`)
+        this.#element.appendChild(circle)
+      }
     }
+  }
+
+  /** 是否为空弦 */
+  #isOpenString(index: number, data: GuitarChordsData) {
+    const { matrix } = data
+    for (let i = 0; i < matrix.length; i++) {
+      if (matrix[i][index] > 0) return false
+    }
+    return true
   }
 }

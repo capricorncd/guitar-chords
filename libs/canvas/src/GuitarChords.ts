@@ -132,8 +132,8 @@ export class GuitarChords {
     // 绘制和弦名称
     this.#drawChordName(data)
 
-    // 绘制和弦外音符号`x`
-    if (Object.keys(data.notesOutsideOfChords).length > 0) {
+    // 绘制和弦外音符号`x/o`
+    if (data.showNotesOutsideOfChords) {
       this.#drawNotesOutsideOfChords(data)
     }
     return this
@@ -294,23 +294,44 @@ export class GuitarChords {
   }
 
   #drawNotesOutsideOfChords(data: GuitarChordsData) {
-    const { stringLineWidth, stringSpacing, stringCount, notesOutsideOfChords } = data
+    const { stringLineWidth, stringSpacing, stringCount, notesOutsideOfChords, devicePixelRatio, crossLineColor, crossLineWidth, fingerRadius } = data
 
     const context = this.#context
+
+    const diameter = fingerRadius * 1.5;
+
     // 绘制垂直交叉线段，长度为指法圆点直径
-    const y = this.gridRect.top / this.#dpr
+    const y = this.gridRect.top / devicePixelRatio
     for (let i = 0; i < stringCount; i++) {
-      if (!notesOutsideOfChords[stringCount - i]) continue
-      const crossCanvas = this.#drawCrossCanvas(data)
-      const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing - crossCanvas.width / 4
-      // 把crossCanvas缩小一半
-      context.drawImage(crossCanvas, x, y - crossCanvas.height / 2, crossCanvas.width / 2, crossCanvas.height / 2)
+      if (!this.#isOpenString(i, data)) continue
+      const x = i * (stringSpacing + stringLineWidth) + stringSpacing + stringLineWidth / 2
+      if (notesOutsideOfChords[stringCount - i]) {
+        const crossCanvas = this.#drawCrossCanvas(data, diameter)
+        // 把crossCanvas缩小一半
+        context.drawImage(crossCanvas, x - crossCanvas.width / (devicePixelRatio * 2), y - crossCanvas.height / devicePixelRatio, crossCanvas.width / devicePixelRatio, crossCanvas.height / devicePixelRatio)
+      } else {
+        // 绘制空弦和弦音圆圈
+        context.fillStyle = crossLineColor
+        context.beginPath()
+        context.arc(x, y - diameter / 2, (diameter - crossLineWidth) / 2, 0, Math.PI * 2)
+        context.lineWidth = crossLineWidth
+        context.strokeStyle = crossLineColor
+        context.stroke();
+      }
     }
   }
 
-  #drawCrossCanvas(data: GuitarChordsData) {
-    const { fingerRadius, crossLineColor, crossLineWidth, devicePixelRatio } = data
-    const diameter = fingerRadius * 2;
+  /** 是否为空弦 */
+  #isOpenString(index: number, data: GuitarChordsData) {
+    const { matrix } = data
+    for (let i = 0; i < matrix.length; i++) {
+      if (matrix[i][index] > 0) return false
+    }
+    return true
+  }
+
+  #drawCrossCanvas(data: GuitarChordsData, diameter: number) {
+    const { crossLineColor, crossLineWidth, devicePixelRatio } = data
     const width = diameter * devicePixelRatio;
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;

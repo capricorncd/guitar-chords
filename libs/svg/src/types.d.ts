@@ -58,8 +58,9 @@ export interface GuitarChordsData {
   startFretsTextColor: string
   // 大横按/小横按时，是否合并指法圆点，默认false
   mergeFingerCircle: boolean
-  // 否显示空弦和弦之外音的选项`{和弦序号（吉他的话为1-6弦）: true | false}`
-  // 用于是否在空弦列头部显示小叉`x`，true表示显示即为和弦之外的音，false则不显示
+  // 用于是否在空弦列头部显示小叉`x/o`，默认为false
+  showNotesOutsideOfChords: boolean
+  // 空弦音是否显示为和弦之外的音选项`{和弦序号（吉他的话为1-6弦）: true | false}`
   notesOutsideOfChords: Record<number, boolean>
   // 和弦外音`x`的线条粗细，默认为琴弦线条宽度。其长度为指法圆点直径
   crossLineWidth: number

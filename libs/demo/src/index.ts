@@ -62,7 +62,8 @@ const chordsList = [
     ],
     notesOutsideOfChords: {
       6: true,
-    }
+    },
+    showNotesOutsideOfChords: true,
   },
   {
     name: 'G7',

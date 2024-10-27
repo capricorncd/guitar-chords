@@ -12,7 +12,7 @@ export const DEF_OPTIONS: GuitarChordsOptions = {
   name: '',
   nameFontSize: 50,
   // nameTextColor: '',
-  spacing: 10,
+  spacing: 12,
   // nutLineWidth: LINE_WIDTH,
   // nutColor: '',
   fretsSpacing: 50,
@@ -34,4 +34,5 @@ export const DEF_OPTIONS: GuitarChordsOptions = {
     [0, 0, 0, 0, 0, 0],
   ],
   mergeFingerCircle: false,
+  showNotesOutsideOfChords: false,
 }
