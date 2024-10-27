@@ -24,6 +24,8 @@ export interface GuitarChordsData {
   nameFontSize: number,
   // 和弦名称颜色
   nameTextColor: string
+  // 和弦名称字母之间的间距，默认0
+  nameLetterSpacing: number
   // 和弦名称与和弦网格之间的间距
   spacing: number
   // 琴枕线条宽度（默认为lineWidth的值）
@@ -75,13 +77,23 @@ export interface GuitarChordsData {
 }
 
 /**
- * Optional
+ * PickOptional
  */
-type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+type PickOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
+/**
+ * OmitOptional
+ */
+type OmitOptional<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>
 
 /**
  * @type GuitarChordsOptions
  * 和弦配置选项
  */
-export type GuitarChordsOptions = Optional<GuitarChordsData, 'nameTextColor' | 'transposeTextColor' | 'nutLineWidth' | 'nutColor' | 'fretsColor' | 'fretsLineWidth' | 'stringColor' | 'stringLineWidth' | 'fingerCircleColor' | 'startFretsTextColor' | 'notesOutsideOfChords' | 'crossLineWidth' | 'crossLineColor'>
+export type GuitarChordsOptions = OmitOptional<GuitarChordsData, 'name' | 'matrix'>
+
+/**
+ * DefaultOptions
+ */
+export type DefaultOptions = PickOptional<GuitarChordsData, 'nameTextColor' | 'transposeTextColor' | 'nutLineWidth' | 'nutColor' | 'fretsColor' | 'fretsLineWidth' | 'stringColor' | 'stringLineWidth' | 'fingerCircleColor' | 'startFretsTextColor' | 'notesOutsideOfChords' | 'crossLineWidth' | 'crossLineColor' | 'nameLetterSpacing'>
 

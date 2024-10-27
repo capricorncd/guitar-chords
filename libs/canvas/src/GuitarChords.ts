@@ -2,7 +2,7 @@
  * Created by Capricorncd.
  * https://github.com/capricorncd
  */
-import type { GuitarChordsData, GuitarChordsOptions } from "./types";
+import type { GuitarChordsData, GuitarChordsOptions, DefaultOptions } from "./types";
 import { DEF_OPTIONS } from "./const";
 
 
@@ -10,12 +10,12 @@ import { DEF_OPTIONS } from "./const";
  * @document 吉他和弦
  */
 export class GuitarChords {
-  #options: GuitarChordsOptions
+  #options: DefaultOptions
   #element: HTMLCanvasElement
   #context: CanvasRenderingContext2D;
   #dpr: number;
 
-  constructor(options: Partial<GuitarChordsOptions> = {}) {
+  constructor(options: GuitarChordsOptions) {
     this.#options = {
       ...DEF_OPTIONS,
       ...options
@@ -74,6 +74,7 @@ export class GuitarChords {
       notesOutsideOfChords = {},
       crossLineWidth = Math.min(stringLineWidth, fretsLineWidth),
       crossLineColor = defaultColor,
+      nameLetterSpacing = 0,
     } = this.#options
     return {
       ...this.#options,
@@ -91,6 +92,7 @@ export class GuitarChords {
       showNotesOutsideOfChords: showNotesOutsideOfChords || Object.keys(notesOutsideOfChords).length > 0,
       crossLineWidth,
       crossLineColor,
+      nameLetterSpacing,
     }
   }
 
@@ -145,15 +147,21 @@ export class GuitarChords {
    * 绘制和弦名称
    */
   #drawChordName(data: GuitarChordsData) {
-    const { name, nameTextColor, nameFontSize, transpose, transposeTextColor, fontFamily } = data
+    const { name, nameTextColor, nameFontSize, transpose, transposeTextColor, fontFamily, nameLetterSpacing } = data
+    const { width } = this.gridRect
+    const gridWidth = width / this.#dpr
+
     const context = this.#context
     context.fillStyle = nameTextColor
     context.font = `${nameFontSize}px ${fontFamily}`
     context.textAlign = 'center'
     context.textBaseline = 'middle'
-    context.fillText(name, this.width / (2 * this.#dpr), nameFontSize / 2)
+    context.letterSpacing = `${nameLetterSpacing}px`
+    context.fillText(name, this.width / (2 * this.#dpr), nameFontSize / 2, gridWidth)
     // 使用measureText方法获取TextMetrics对象
     const nameTextMetrics = context.measureText(name)
+    // reset
+    context.letterSpacing = `0px`
 
     // 变调符号绘制
     if (transpose !== 0) {
@@ -165,7 +173,7 @@ export class GuitarChords {
       // 在和弦名称的左上角绘制变调符号，如为1时#、-1时b
       context.fillText(
         transpose === 1 ? '♯' : '♭',
-        this.width / (2 * this.#dpr) - nameTextMetrics.width / 2,
+        this.width / (2 * this.#dpr) - Math.min(nameTextMetrics.width / 2, gridWidth / 2),
         transposeFontSize / 2,
       )
     }
@@ -256,7 +264,7 @@ export class GuitarChords {
     context.textBaseline = 'middle'
     context.fillText(startFrets.toString(),
       0,
-      (top / this.#dpr + nutLineWidth + fretsSpacing / 2)
+      (top / this.#dpr + nutLineWidth + fretsSpacing / 2),
     )
   }
 
@@ -300,7 +308,7 @@ export class GuitarChords {
 
     const context = this.#context
 
-    const diameter = fingerRadius * 1.25;
+    const diameter = fingerRadius * 1.5;
 
     // 绘制垂直交叉线段，长度为指法圆点直径
     const y = this.gridRect.top / devicePixelRatio

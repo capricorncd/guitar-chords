@@ -2,9 +2,9 @@
  * Created by Capricorncd.
  * https://github.com/capricorncd
  */
-import type { GuitarChordsOptions } from "./types";
+import type { DefaultOptions } from "./types";
 
-export const DEF_OPTIONS: GuitarChordsOptions = {
+export const DEF_OPTIONS: DefaultOptions = {
   autoRender: true,
   defaultColor: '#000',
   defaultLineWidth: 4,
