@@ -2,7 +2,7 @@
  * Created by Capricorncd.
  * https://github.com/capricorncd
  */
-import type { DefaultOptions } from "./types";
+import type { DefaultOptions } from './types'
 
 export const DEF_OPTIONS: DefaultOptions = {
   autoRender: true,
@@ -36,5 +36,5 @@ export const DEF_OPTIONS: DefaultOptions = {
   ],
   mergeFingerCircle: false,
   showNotesOutsideOfChords: false,
-  devicePixelRatio: window.devicePixelRatio || 1
+  devicePixelRatio: window.devicePixelRatio || 1,
 }

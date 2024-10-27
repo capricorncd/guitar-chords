@@ -1,4 +1,7 @@
-import { GuitarChords as CanvasGuitarChords, type GuitarChordsOptions } from '@guitar-chords/canvas'
+import {
+  GuitarChords as CanvasGuitarChords,
+  type GuitarChordsOptions,
+} from '@guitar-chords/canvas'
 import { GuitarChords as SvgGuitarChords } from '@guitar-chords/svg'
 
 const chordsList: GuitarChordsOptions[] = [
@@ -14,7 +17,7 @@ const chordsList: GuitarChordsOptions[] = [
       [0, 0, 0, 0, 1, 0],
       [0, 0, 2, 0, 0, 0],
       [3, 4, 0, 0, 0, 0],
-    ]
+    ],
   },
   {
     name: 'Dm',
@@ -24,7 +27,7 @@ const chordsList: GuitarChordsOptions[] = [
       [0, 0, 0, 0, 0, 1],
       [0, 0, 0, 2, 0, 0],
       [0, 0, 0, 0, 3, 0],
-    ]
+    ],
   },
   {
     name: 'Em',
@@ -33,7 +36,7 @@ const chordsList: GuitarChordsOptions[] = [
       [0, 0, 0, 0, 0, 0],
       [0, 2, 3, 0, 0, 0],
       [0, 0, 0, 0, 0, 0],
-    ]
+    ],
   },
   {
     name: 'F',
@@ -43,7 +46,7 @@ const chordsList: GuitarChordsOptions[] = [
       [1, 0, 0, 0, 1, 1],
       [0, 0, 0, 2, 0, 0],
       [0, 3, 4, 0, 0, 0],
-    ]
+    ],
   },
   {
     name: 'G',
@@ -71,7 +74,7 @@ const chordsList: GuitarChordsOptions[] = [
       [0, 0, 0, 0, 0, 1],
       [0, 2, 0, 0, 0, 0],
       [3, 0, 0, 0, 0, 0],
-    ]
+    ],
   },
   {
     name: 'C3',
@@ -82,7 +85,7 @@ const chordsList: GuitarChordsOptions[] = [
       [1, 1, 0, 0, 0, 1],
       [0, 0, 0, 0, 0, 0],
       [0, 0, 2, 3, 4, 0],
-    ]
+    ],
   },
   {
     name: 'F',
@@ -92,7 +95,7 @@ const chordsList: GuitarChordsOptions[] = [
       [1, 1, 0, 0, 0, 1],
       [0, 0, 0, 2, 0, 0],
       [0, 3, 4, 0, 0, 0],
-    ]
+    ],
   },
   {
     name: 'Am',
@@ -102,7 +105,7 @@ const chordsList: GuitarChordsOptions[] = [
       [1, 1, 0, 0, 0, 1],
       [0, 0, 0, 0, 2, 0],
       [0, 0, 3, 4, 0, 0],
-    ]
+    ],
   },
   {
     name: 'C3',
@@ -115,7 +118,7 @@ const chordsList: GuitarChordsOptions[] = [
       [1, 1, 0, 0, 0, 1],
       [0, 0, 0, 0, 0, 0],
       [0, 0, 2, 3, 4, 0],
-    ]
+    ],
   },
   {
     name: 'C3',
@@ -127,7 +130,7 @@ const chordsList: GuitarChordsOptions[] = [
       [1, 1, 0, 0, 0, 1],
       [0, 0, 0, 0, 0, 0],
       [0, 0, 3, 3, 3, 0],
-    ]
+    ],
   },
   {
     name: 'Fmaj7',
@@ -139,7 +142,7 @@ const chordsList: GuitarChordsOptions[] = [
       [0, 0, 0, 1, 1, 1],
       [0, 0, 2, 0, 0, 0],
       [0, 3, 0, 0, 0, 0],
-    ]
+    ],
   },
   {
     name: 'Cm7-5',
@@ -154,49 +157,48 @@ const chordsList: GuitarChordsOptions[] = [
       [0, 0, 3, 0, 4, 0],
     ],
     notesOutsideOfChords: {
-      6: true
-    }
+      6: true,
+    },
   },
 ]
 
-  const app = document.getElementById('app') as HTMLDivElement
+const app = document.getElementById('app') as HTMLDivElement
 
-  const canvasTitle = document.createElement('h1')
-  canvasTitle.textContent = 'Canvas'
-  app.append(canvasTitle)
+const canvasTitle = document.createElement('h1')
+canvasTitle.textContent = 'Canvas'
+app.append(canvasTitle)
 
-  app.append(...chordsList.map(v => new CanvasGuitarChords(v).element))
+app.append(...chordsList.map((v) => new CanvasGuitarChords(v).element))
 
-  const cSharpData: GuitarChordsOptions = {
-    name: 'C',
-    transpose: 1,
-    matrix: [
-      [0, 0, 0, 1, 0, 1],
-      [0, 0, 0, 0, 2, 0],
-      [0, 0, 3, 0, 0, 0],
-      [0, 4, 0, 0, 0, 0],
-    ],
-    notesOutsideOfChords: {
-      6: true
-    },
-    mergeFingerCircle: true,
-  }
+const cSharpData: GuitarChordsOptions = {
+  name: 'C',
+  transpose: 1,
+  matrix: [
+    [0, 0, 0, 1, 0, 1],
+    [0, 0, 0, 0, 2, 0],
+    [0, 0, 3, 0, 0, 0],
+    [0, 4, 0, 0, 0, 0],
+  ],
+  notesOutsideOfChords: {
+    6: true,
+  },
+  mergeFingerCircle: true,
+}
 
-  const testCanvas = new CanvasGuitarChords({
-    ...chordsList[0],
-    autoRender: false,
-  })
-  console.log(testCanvas.data)
+const testCanvas = new CanvasGuitarChords({
+  ...chordsList[0],
+  autoRender: false,
+})
+console.log(testCanvas.data)
 
-  testCanvas.render()
-  app.append(testCanvas.render(cSharpData).element)
-
+testCanvas.render()
+app.append(testCanvas.render(cSharpData).element)
 
 const svgTitle = document.createElement('h1')
 svgTitle.textContent = 'SVG'
 app.append(svgTitle)
 
-app.append(...chordsList.map(v => new SvgGuitarChords(v).element))
+app.append(...chordsList.map((v) => new SvgGuitarChords(v).element))
 
 const testSvg = new SvgGuitarChords({
   ...chordsList[0],
@@ -205,5 +207,4 @@ const testSvg = new SvgGuitarChords({
 console.log(testSvg.data)
 
 testSvg.render()
-app.append(testSvg.render({ ...cSharpData, name: 'Test'}).element)
-
+app.append(testSvg.render({ ...cSharpData, name: 'Test' }).element)

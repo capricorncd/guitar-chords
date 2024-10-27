@@ -30,7 +30,7 @@ const commitTypeList = Object.keys(COMMIT_TYPES).map(
   (key) => `${key}: ${COMMIT_TYPES[key]}`
 )
 
- const main = async () => {
+const main = async () => {
   return await new Promise((resolve, reject) => {
     // 获取commit消息，并去除结尾的换行符
     const msg = readFileSync(process.env.GIT_PARAMS, 'utf-8').replace(

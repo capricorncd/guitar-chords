@@ -2,9 +2,13 @@
  * Created by Capricorncd.
  * https://github.com/capricorncd
  */
-import type { GuitarChordsOptions, GuitarChordsData, DefaultOptions } from "./types";
-import { DEF_OPTIONS } from "./const";
+import { DEF_OPTIONS } from './const'
 import { createSvgElement } from './helpers'
+import type {
+  GuitarChordsOptions,
+  GuitarChordsData,
+  DefaultOptions,
+} from './types'
 
 /**
  * @document 吉他和弦
@@ -16,11 +20,11 @@ export class GuitarChords {
   constructor(options: Partial<GuitarChordsOptions> = {}) {
     this.#options = {
       ...DEF_OPTIONS,
-      ...options
+      ...options,
     }
 
     const { autoRender } = this.#options
-    this.#element = createSvgElement("svg")
+    this.#element = createSvgElement('svg')
     if (autoRender) this.#draw()
   }
 
@@ -30,31 +34,53 @@ export class GuitarChords {
 
   get width() {
     const { stringCount, stringSpacing, stringLineWidth } = this.data
-    return (stringSpacing * (stringCount + 1) + stringLineWidth * stringCount)
+    return stringSpacing * (stringCount + 1) + stringLineWidth * stringCount
   }
 
   get height() {
-    const { nutLineWidth, fretsSpacing, fretsLineWidth, matrix, spacing, nameFontSize } = this.data
-    return nutLineWidth + (fretsSpacing + fretsLineWidth) * matrix.length + nameFontSize + spacing
+    const {
+      nutLineWidth,
+      fretsSpacing,
+      fretsLineWidth,
+      matrix,
+      spacing,
+      nameFontSize,
+    } = this.data
+    return (
+      nutLineWidth +
+      (fretsSpacing + fretsLineWidth) * matrix.length +
+      nameFontSize +
+      spacing
+    )
   }
 
   /**
    * 网格尺寸
    */
   get gridRect() {
-    const { nutLineWidth, stringSpacing, stringLineWidth, stringCount, matrix, spacing, fretsSpacing, fretsLineWidth, nameFontSize } = this.data
+    const {
+      nutLineWidth,
+      stringSpacing,
+      stringLineWidth,
+      stringCount,
+      matrix,
+      spacing,
+      fretsSpacing,
+      fretsLineWidth,
+      nameFontSize,
+    } = this.data
     return {
-      width: (stringSpacing * (stringCount - 1) + stringLineWidth * stringCount),
+      width: stringSpacing * (stringCount - 1) + stringLineWidth * stringCount,
       height: nutLineWidth + (fretsSpacing + fretsLineWidth) * matrix.length,
       left: stringSpacing,
-      top: (nameFontSize + spacing),
-      right: (this.width - stringSpacing),
+      top: nameFontSize + spacing,
+      right: this.width - stringSpacing,
       bottom: this.height,
     }
   }
 
   get data(): GuitarChordsData {
-    const { defaultColor, defaultLineWidth} = this.#options
+    const { defaultColor, defaultLineWidth } = this.#options
     const {
       nameTextColor = defaultColor,
       nutLineWidth = defaultLineWidth,
@@ -85,7 +111,9 @@ export class GuitarChords {
       startFretsTextColor,
       transposeTextColor,
       notesOutsideOfChords,
-      showNotesOutsideOfChords: showNotesOutsideOfChords || Object.keys(notesOutsideOfChords).length > 0,
+      showNotesOutsideOfChords:
+        showNotesOutsideOfChords ||
+        Object.keys(notesOutsideOfChords).length > 0,
       crossLineWidth,
       crossLineColor,
       nameLetterSpacing,
@@ -101,7 +129,7 @@ export class GuitarChords {
     if (options) {
       this.#options = {
         ...this.#options,
-        ...options
+        ...options,
       }
     }
     this.#element.innerHTML = ''
@@ -127,18 +155,25 @@ export class GuitarChords {
   }
 
   #drawChordName(data: GuitarChordsData) {
-    const { name, nameTextColor, nameFontSize, transposeTextColor, transpose, nameLetterSpacing } = data
+    const {
+      name,
+      nameTextColor,
+      nameFontSize,
+      transposeTextColor,
+      transpose,
+      nameLetterSpacing,
+    } = data
     // 是否变调
     const hasTranspose = !!transpose
     // 变调符号字体大小
     const transposeFontSize = nameFontSize / 2
 
-    const text = createSvgElement("text", {
+    const text = createSvgElement('text', {
       // 变调时，x向左偏移1/4文字大小(1/2变调符号字体大小)
-      'x': this.width / 2 - (hasTranspose ? transposeFontSize / 2 : 0),
+      x: this.width / 2 - (hasTranspose ? transposeFontSize / 2 : 0),
       // y偏移字体大小的20%，使变调符号可以全部显示
-      'y': nameFontSize / 2 + transposeFontSize * 0.2,
-      'fill': nameTextColor,
+      y: nameFontSize / 2 + transposeFontSize * 0.2,
+      fill: nameTextColor,
       'font-size': nameFontSize,
       'text-anchor': 'middle',
       'dominant-baseline': 'middle',
@@ -147,21 +182,29 @@ export class GuitarChords {
 
     // 变调符号
     if (hasTranspose) {
-      text.append(createSvgElement("tspan", {
-          fill: transposeTextColor,
-          style: `font-size: ${transposeFontSize}px;`,
-          'alignment-baseline': "middle",
-          'baseline-shift': 'super',
-        },
-        transpose === 1 ? '♯' : '♭'),
+      text.append(
+        createSvgElement(
+          'tspan',
+          {
+            fill: transposeTextColor,
+            style: `font-size: ${transposeFontSize}px;`,
+            'alignment-baseline': 'middle',
+            'baseline-shift': 'super',
+          },
+          transpose === 1 ? '♯' : '♭'
+        )
       )
     }
 
     // 和弦名称
-    const nameTspan = createSvgElement<SVGTextElement>("tspan", {
-      style: `letter-spacing:${nameLetterSpacing}px;`,
-      'alignment-baseline': "middle",
-    }, name)
+    const nameTspan = createSvgElement<SVGTextElement>(
+      'tspan',
+      {
+        style: `letter-spacing:${nameLetterSpacing}px;`,
+        'alignment-baseline': 'middle',
+      },
+      name
+    )
     text.append(nameTspan)
 
     // TODO: 和弦名称是否超出了网格的宽度
@@ -177,17 +220,40 @@ export class GuitarChords {
   }
 
   #drawFingerPositions(data: GuitarChordsData) {
-    const { stringSpacing, fingerCircleColor, stringLineWidth, fingerRadius, spacing, matrix, fretsSpacing, fretsLineWidth, nameFontSize, nutLineWidth, fingerNumberTextColor, showFingerNumber, mergeFingerCircle } = data
+    const {
+      stringSpacing,
+      fingerCircleColor,
+      stringLineWidth,
+      fingerRadius,
+      spacing,
+      matrix,
+      fretsSpacing,
+      fretsLineWidth,
+      nameFontSize,
+      nutLineWidth,
+      fingerNumberTextColor,
+      showFingerNumber,
+      mergeFingerCircle,
+    } = data
     const fontSize = fingerRadius * 1.5
 
-    const fingerCircleMap = new Map<number, { x: number, y: number }[]>()
+    const fingerCircleMap = new Map<number, { x: number; y: number }[]>()
 
     for (let fret = 0; fret < matrix.length; fret++) {
       for (let string = 0; string < matrix[fret].length; string++) {
         const fingerNumber = matrix[fret][string]
         if (fingerNumber > 0) {
-          const x = string * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
-          const y = (fret + 0.5) * (fretsSpacing + fretsLineWidth) + fretsLineWidth / 2 + nameFontSize + spacing + nutLineWidth - fretsLineWidth
+          const x =
+            string * (stringSpacing + stringLineWidth) +
+            stringLineWidth / 2 +
+            stringSpacing
+          const y =
+            (fret + 0.5) * (fretsSpacing + fretsLineWidth) +
+            fretsLineWidth / 2 +
+            nameFontSize +
+            spacing +
+            nutLineWidth -
+            fretsLineWidth
 
           // 大横按/小横按时，合并指法圆点
           if (mergeFingerCircle) {
@@ -198,15 +264,18 @@ export class GuitarChords {
             fingerCircleList.push({ x, y })
 
             // 相同手指编号的最后一个指法圆点绘制
-            if (fingerCircleList.length > 1 && string === matrix[fret].lastIndexOf(fingerNumber)) {
+            if (
+              fingerCircleList.length > 1 &&
+              string === matrix[fret].lastIndexOf(fingerNumber)
+            ) {
               const startPoint = fingerCircleList[0]
               const endPoint = { x, y }
-              const line = createSvgElement("line", {
-                'x1': `${startPoint.x}`,
-                'y1': `${startPoint.y}`,
-                'x2': `${endPoint.x}`,
-                'y2': `${endPoint.y}`,
-                'stroke': fingerCircleColor,
+              const line = createSvgElement('line', {
+                x1: `${startPoint.x}`,
+                y1: `${startPoint.y}`,
+                x2: `${endPoint.x}`,
+                y2: `${endPoint.y}`,
+                stroke: fingerCircleColor,
                 'stroke-width': `${fingerRadius * 2}`,
                 'stroke-linecap': 'round',
               })
@@ -214,22 +283,38 @@ export class GuitarChords {
 
               // 在横按的最后一个位置绘制指法编号
               if (showFingerNumber) {
-                this.#drawFingerNumber(x, y, fingerNumber, fingerNumberTextColor, fontSize)
+                this.#drawFingerNumber(
+                  x,
+                  y,
+                  fingerNumber,
+                  fingerNumberTextColor,
+                  fontSize
+                )
               }
               continue
             }
           }
 
-          const circle = createSvgElement("circle", {
-            'cx': `${x}`,
-            'cy': `${y}`,
-            'r': `${fingerRadius}`,
-            'fill': fingerCircleColor,
+          const circle = createSvgElement('circle', {
+            cx: `${x}`,
+            cy: `${y}`,
+            r: `${fingerRadius}`,
+            fill: fingerCircleColor,
           })
           this.#element.appendChild(circle)
 
-          if (showFingerNumber && (!mergeFingerCircle || string === matrix[fret].lastIndexOf(fingerNumber))) {
-            this.#drawFingerNumber(x, y, fingerNumber, fingerNumberTextColor, fontSize)
+          if (
+            showFingerNumber &&
+            (!mergeFingerCircle ||
+              string === matrix[fret].lastIndexOf(fingerNumber))
+          ) {
+            this.#drawFingerNumber(
+              x,
+              y,
+              fingerNumber,
+              fingerNumberTextColor,
+              fontSize
+            )
           }
         }
       }
@@ -237,49 +322,84 @@ export class GuitarChords {
   }
 
   // 新增一个辅助方法来绘制指法编号
-  #drawFingerNumber(x: number, y: number, fingerNumber: number, color: string, fontSize: number) {
-    const text = createSvgElement("text", {
-      'x': `${x}`,
-      'y': `${y}`,
-      'fill': color,
-      'font-size': `${fontSize}`,
-      'text-anchor': 'middle',
-      'dominant-baseline': 'central',
-    }, fingerNumber)
+  #drawFingerNumber(
+    x: number,
+    y: number,
+    fingerNumber: number,
+    color: string,
+    fontSize: number
+  ) {
+    const text = createSvgElement(
+      'text',
+      {
+        x: `${x}`,
+        y: `${y}`,
+        fill: color,
+        'font-size': `${fontSize}`,
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central',
+      },
+      fingerNumber
+    )
     this.#element.appendChild(text)
   }
 
   #drawFretNumbers(data: GuitarChordsData) {
-    const { startFretsTextColor, startFrets, nameFontSize, nutLineWidth, fretsLineWidth, fretsSpacing } = data
+    const {
+      startFretsTextColor,
+      startFrets,
+      nameFontSize,
+      nutLineWidth,
+      fretsLineWidth,
+      fretsSpacing,
+    } = data
     if (startFrets <= 1) return
 
     const fontSize = nameFontSize / 2
-    const text = createSvgElement("text", {
-      'x': '0',
-      'y': `${this.gridRect.top + nutLineWidth + fretsSpacing / 2 + fretsLineWidth * 2}`,
-      'fill': startFretsTextColor,
-      'font-size': `${fontSize}`,
-      'font-style': 'italic',
-    }, startFrets)
+    const text = createSvgElement(
+      'text',
+      {
+        x: '0',
+        y: `${this.gridRect.top + nutLineWidth + fretsSpacing / 2 + fretsLineWidth * 2}`,
+        fill: startFretsTextColor,
+        'font-size': `${fontSize}`,
+        'font-style': 'italic',
+      },
+      startFrets
+    )
     this.#element.appendChild(text)
   }
 
   #drawGrid(data: GuitarChordsData) {
-    const { matrix, stringLineWidth, stringSpacing, stringColor, stringCount, fretsSpacing, fretsLineWidth, fretsColor, nutLineWidth, nutColor } = data
+    const {
+      matrix,
+      stringLineWidth,
+      stringSpacing,
+      stringColor,
+      stringCount,
+      fretsSpacing,
+      fretsLineWidth,
+      fretsColor,
+      nutLineWidth,
+      nutColor,
+    } = data
     const fretCount = matrix.length
 
     const { top, bottom, right, left } = this.gridRect
 
     // 绘制竖线（代表琴弦）
     for (let i = 0; i < stringCount; i++) {
-      const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
-      const line = createSvgElement("line", {
-        'x1': `${x}`,
+      const x =
+        i * (stringSpacing + stringLineWidth) +
+        stringLineWidth / 2 +
+        stringSpacing
+      const line = createSvgElement('line', {
+        x1: `${x}`,
         // 从琴枕横线下方 1/2 琴枕宽度开始
-        'y1': `${top + nutLineWidth}`,
-        'x2': `${x}`,
-        'y2': `${bottom}`,
-        'stroke': stringColor,
+        y1: `${top + nutLineWidth}`,
+        x2: `${x}`,
+        y2: `${bottom}`,
+        stroke: stringColor,
         'stroke-width': `${stringLineWidth}`,
       })
       this.#element.appendChild(line)
@@ -288,13 +408,18 @@ export class GuitarChords {
     // 绘制横线（代表品位）
     for (let i = 0; i <= fretCount; i++) {
       const isNut = i === 0
-      const y = isNut ? top + nutLineWidth / 2 : i * (fretsSpacing + fretsLineWidth) + top + nutLineWidth - fretsLineWidth / 2
-      const line = createSvgElement("line", {
-        'x1': `${left}`,
-        'y1': `${y}`,
-        'x2': `${right}`,
-        'y2': `${y}`,
-        'stroke': isNut ? nutColor : fretsColor,
+      const y = isNut
+        ? top + nutLineWidth / 2
+        : i * (fretsSpacing + fretsLineWidth) +
+          top +
+          nutLineWidth -
+          fretsLineWidth / 2
+      const line = createSvgElement('line', {
+        x1: `${left}`,
+        y1: `${y}`,
+        x2: `${right}`,
+        y2: `${y}`,
+        stroke: isNut ? nutColor : fretsColor,
         'stroke-width': `${isNut ? nutLineWidth : fretsLineWidth}`,
       })
       this.#element.appendChild(line)
@@ -302,36 +427,47 @@ export class GuitarChords {
   }
 
   #drawNotesOutsideOfChords(data: GuitarChordsData) {
-    const { stringLineWidth, stringSpacing, stringCount, notesOutsideOfChords, fingerRadius, crossLineColor, crossLineWidth } = data
+    const {
+      stringLineWidth,
+      stringSpacing,
+      stringCount,
+      notesOutsideOfChords,
+      fingerRadius,
+      crossLineColor,
+      crossLineWidth,
+    } = data
 
     // 绘制垂直交叉线段，长度为指法圆点直径
     const y = this.gridRect.top
     for (let i = 0; i < stringCount; i++) {
       if (!this.#isOpenString(i, data)) continue
-      const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
+      const x =
+        i * (stringSpacing + stringLineWidth) +
+        stringLineWidth / 2 +
+        stringSpacing
       if (notesOutsideOfChords[stringCount - i]) {
-        const group = createSvgElement("g", {
-          'transform': `translate(${x - fingerRadius / 2}, ${y - fingerRadius * 1.2})`,
+        const group = createSvgElement('g', {
+          transform: `translate(${x - fingerRadius / 2}, ${y - fingerRadius * 1.2})`,
         })
 
         // 绘制交叉线
-        const line1 = createSvgElement("line", {
-          'x1': '0',
-          'y1': '0',
-          'x2': `${fingerRadius}`,
-          'y2': `${fingerRadius}`,
-          'stroke': crossLineColor,
+        const line1 = createSvgElement('line', {
+          x1: '0',
+          y1: '0',
+          x2: `${fingerRadius}`,
+          y2: `${fingerRadius}`,
+          stroke: crossLineColor,
           'stroke-width': `${crossLineWidth}`,
           'stroke-linecap': 'round',
         })
         group.appendChild(line1)
 
-        const line2 = createSvgElement("line", {
-          'x1': '0',
-          'y1': `${fingerRadius}`,
-          'x2': `${fingerRadius}`,
-          'y2': '0',
-          'stroke': crossLineColor,
+        const line2 = createSvgElement('line', {
+          x1: '0',
+          y1: `${fingerRadius}`,
+          x2: `${fingerRadius}`,
+          y2: '0',
+          stroke: crossLineColor,
           'stroke-width': `${crossLineWidth}`,
           'stroke-linecap': 'round',
         })
@@ -340,12 +476,12 @@ export class GuitarChords {
         this.#element.appendChild(group)
       } else {
         const radius = fingerRadius * 0.75
-        const circle = createSvgElement("circle", {
-          'cx': `${x}`,
-          'cy': `${y - radius * 1.1}`,
-          'r': `${radius}`,
-          'fill': 'transparent',
-          'stroke': crossLineColor,
+        const circle = createSvgElement('circle', {
+          cx: `${x}`,
+          cy: `${y - radius * 1.1}`,
+          r: `${radius}`,
+          fill: 'transparent',
+          stroke: crossLineColor,
           'stroke-width': `${crossLineWidth}`,
         })
         this.#element.appendChild(circle)
