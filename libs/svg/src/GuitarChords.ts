@@ -4,13 +4,14 @@
  */
 import type { GuitarChordsOptions, GuitarChordsData } from "./types";
 import { DEF_OPTIONS } from "./const";
+import { createSvgElement } from './helpers'
 
 /**
  * @document 吉他和弦
  */
 export class GuitarChords {
   #options: GuitarChordsOptions
-  #element: SVGSVGElement
+  #element: SVGElement
 
   constructor(options: Partial<GuitarChordsOptions> = {}) {
     this.#options = {
@@ -19,7 +20,7 @@ export class GuitarChords {
     }
 
     const { autoRender } = this.#options
-    this.#element = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+    this.#element = createSvgElement("svg")
     if (autoRender) this.#draw()
   }
 
@@ -124,27 +125,30 @@ export class GuitarChords {
 
   #drawChordName(data: GuitarChordsData) {
     const { name, nameTextColor, nameFontSize, transposeTextColor, transpose } = data
-    const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
-    text.setAttribute('x', `${this.width / 2}`)
-    text.setAttribute('y', `${nameFontSize / 2}`)
-    text.setAttribute('fill', nameTextColor)
-    text.setAttribute('font-size', `${nameFontSize}`)
-    text.setAttribute('text-anchor', 'middle')
-    text.setAttribute('dominant-baseline', 'middle')
+    const text = createSvgElement("text", {
+      'x': this.width / 2,
+      'y': nameFontSize / 2,
+      'fill': nameTextColor,
+      'font-size': nameFontSize,
+      'text-anchor': 'middle',
+      'dominant-baseline': 'middle',
+    })
+
     text.textContent = name
     this.#element.appendChild(text)
 
     // 在和弦名称的左上角绘制变调符号
     if (transpose) {
-      const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
       const transposeFontSize = nameFontSize / 2
       const isRisingPitch = transpose === 1
-      text.setAttribute('x', `${this.width / 2 - nameFontSize * name.length / 2}`)
-      text.setAttribute('y', `${transposeFontSize * 0.5}`)
-      text.setAttribute('fill', transposeTextColor)
-      text.setAttribute('font-size', `${transposeFontSize}`)
-      text.setAttribute('text-anchor', isRisingPitch ? 'middle' : 'start')
-      text.setAttribute('dominant-baseline', 'middle')
+      const text = createSvgElement("text", {
+        'x': `${this.width / 2 - nameFontSize * name.length / 2}`,
+        'y': `${transposeFontSize * 0.5}`,
+        'fill': transposeTextColor,
+        'font-size': `${transposeFontSize}`,
+        'text-anchor': isRisingPitch ? 'middle' : 'start',
+        'dominant-baseline': 'middle',
+      })
       text.textContent = isRisingPitch ? '♯' : '♭'
       this.#element.appendChild(text)
     }
@@ -175,14 +179,15 @@ export class GuitarChords {
             if (fingerCircleList.length > 1 && string === matrix[fret].lastIndexOf(fingerNumber)) {
               const startPoint = fingerCircleList[0]
               const endPoint = { x, y }
-              const line = document.createElementNS("http://www.w3.org/2000/svg", "line")
-              line.setAttribute('x1', `${startPoint.x}`)
-              line.setAttribute('y1', `${startPoint.y}`)
-              line.setAttribute('x2', `${endPoint.x}`)
-              line.setAttribute('y2', `${endPoint.y}`)
-              line.setAttribute('stroke', fingerCircleColor)
-              line.setAttribute('stroke-width', `${fingerRadius * 2}`)
-              line.setAttribute('stroke-linecap', 'round')
+              const line = createSvgElement("line", {
+                'x1': `${startPoint.x}`,
+                'y1': `${startPoint.y}`,
+                'x2': `${endPoint.x}`,
+                'y2': `${endPoint.y}`,
+                'stroke': fingerCircleColor,
+                'stroke-width': `${fingerRadius * 2}`,
+                'stroke-linecap': 'round',
+              })
               this.#element.appendChild(line)
 
               // 在横按的最后一个位置绘制指法编号
@@ -193,11 +198,12 @@ export class GuitarChords {
             }
           }
 
-          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-          circle.setAttribute('cx', `${x}`)
-          circle.setAttribute('cy', `${y}`)
-          circle.setAttribute('r', `${fingerRadius}`)
-          circle.setAttribute('fill', fingerCircleColor)
+          const circle = createSvgElement("circle", {
+            'cx': `${x}`,
+            'cy': `${y}`,
+            'r': `${fingerRadius}`,
+            'fill': fingerCircleColor,
+          })
           this.#element.appendChild(circle)
 
           if (showFingerNumber && (!mergeFingerCircle || string === matrix[fret].lastIndexOf(fingerNumber))) {
@@ -210,13 +216,14 @@ export class GuitarChords {
 
   // 新增一个辅助方法来绘制指法编号
   #drawFingerNumber(x: number, y: number, fingerNumber: number, color: string, fontSize: number) {
-    const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
-    text.setAttribute('x', `${x}`)
-    text.setAttribute('y', `${y}`)
-    text.setAttribute('fill', color)
-    text.setAttribute('font-size', `${fontSize}`)
-    text.setAttribute('text-anchor', 'middle')
-    text.setAttribute('dominant-baseline', 'central')
+    const text = createSvgElement("text", {
+      'x': `${x}`,
+      'y': `${y}`,
+      'fill': color,
+      'font-size': `${fontSize}`,
+      'text-anchor': 'middle',
+      'dominant-baseline': 'central',
+    })
     text.textContent = fingerNumber.toString()
     this.#element.appendChild(text)
   }
@@ -226,12 +233,13 @@ export class GuitarChords {
     if (startFrets <= 1) return
 
     const fontSize = nameFontSize / 2
-    const text = document.createElementNS("http://www.w3.org/2000/svg", "text")
-    text.setAttribute('x', '0')
-    text.setAttribute('y', `${this.gridRect.top + nutLineWidth + fretsSpacing / 2 + fretsLineWidth * 2}`)
-    text.setAttribute('fill', startFretsTextColor)
-    text.setAttribute('font-size', `${fontSize}`)
-    text.setAttribute('font-style', 'italic')
+    const text = createSvgElement("text", {
+      'x': '0',
+      'y': `${this.gridRect.top + nutLineWidth + fretsSpacing / 2 + fretsLineWidth * 2}`,
+      'fill': startFretsTextColor,
+      'font-size': `${fontSize}`,
+      'font-style': 'italic',
+    })
     text.textContent = startFrets.toString()
     this.#element.appendChild(text)
   }
@@ -245,13 +253,15 @@ export class GuitarChords {
     // 绘制竖线（代表琴弦）
     for (let i = 0; i < stringCount; i++) {
       const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line")
-      line.setAttribute('x1', `${x}`)
-      line.setAttribute('y1', `${top + nutLineWidth}`) // 从琴枕横线下方 1/2 琴枕宽度开始
-      line.setAttribute('x2', `${x}`)
-      line.setAttribute('y2', `${bottom}`)
-      line.setAttribute('stroke', stringColor)
-      line.setAttribute('stroke-width', `${stringLineWidth}`)
+      const line = createSvgElement("line", {
+        'x1': `${x}`,
+        // 从琴枕横线下方 1/2 琴枕宽度开始
+        'y1': `${top + nutLineWidth}`,
+        'x2': `${x}`,
+        'y2': `${bottom}`,
+        'stroke': stringColor,
+        'stroke-width': `${stringLineWidth}`,
+      })
       this.#element.appendChild(line)
     }
 
@@ -259,13 +269,14 @@ export class GuitarChords {
     for (let i = 0; i <= fretCount; i++) {
       const isNut = i === 0
       const y = isNut ? top + nutLineWidth / 2 : i * (fretsSpacing + fretsLineWidth) + top + nutLineWidth - fretsLineWidth / 2
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line")
-      line.setAttribute('x1', `${left}`)
-      line.setAttribute('y1', `${y}`)
-      line.setAttribute('x2', `${right}`)
-      line.setAttribute('y2', `${y}`)
-      line.setAttribute('stroke', isNut ? nutColor : fretsColor)
-      line.setAttribute('stroke-width', `${isNut ? nutLineWidth : fretsLineWidth}`)
+      const line = createSvgElement("line", {
+        'x1': `${left}`,
+        'y1': `${y}`,
+        'x2': `${right}`,
+        'y2': `${y}`,
+        'stroke': isNut ? nutColor : fretsColor,
+        'stroke-width': `${isNut ? nutLineWidth : fretsLineWidth}`,
+      })
       this.#element.appendChild(line)
     }
   }
@@ -279,40 +290,44 @@ export class GuitarChords {
       if (!this.#isOpenString(i, data)) continue
       const x = i * (stringSpacing + stringLineWidth) + stringLineWidth / 2 + stringSpacing
       if (notesOutsideOfChords[stringCount - i]) {
-        const group = document.createElementNS("http://www.w3.org/2000/svg", "g")
-        group.setAttribute('transform', `translate(${x - fingerRadius / 2}, ${y - fingerRadius * 1.2})`)
+        const group = createSvgElement("g", {
+          'transform': `translate(${x - fingerRadius / 2}, ${y - fingerRadius * 1.2})`,
+        })
 
         // 绘制交叉线
-        const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line")
-        line1.setAttribute('x1', '0')
-        line1.setAttribute('y1', '0')
-        line1.setAttribute('x2', `${fingerRadius}`)
-        line1.setAttribute('y2', `${fingerRadius}`)
-        line1.setAttribute('stroke', crossLineColor)
-        line1.setAttribute('stroke-width', `${crossLineWidth}`)
-        line1.setAttribute('stroke-linecap', 'round')
+        const line1 = createSvgElement("line", {
+          'x1': '0',
+          'y1': '0',
+          'x2': `${fingerRadius}`,
+          'y2': `${fingerRadius}`,
+          'stroke': crossLineColor,
+          'stroke-width': `${crossLineWidth}`,
+          'stroke-linecap': 'round',
+        })
         group.appendChild(line1)
 
-        const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line")
-        line2.setAttribute('x1', '0')
-        line2.setAttribute('y1', `${fingerRadius}`)
-        line2.setAttribute('x2', `${fingerRadius}`)
-        line2.setAttribute('y2', '0')
-        line2.setAttribute('stroke', crossLineColor)
-        line2.setAttribute('stroke-width', `${crossLineWidth}`)
-        line2.setAttribute('stroke-linecap', 'round')
+        const line2 = createSvgElement("line", {
+          'x1': '0',
+          'y1': `${fingerRadius}`,
+          'x2': `${fingerRadius}`,
+          'y2': '0',
+          'stroke': crossLineColor,
+          'stroke-width': `${crossLineWidth}`,
+          'stroke-linecap': 'round',
+        })
         group.appendChild(line2)
 
         this.#element.appendChild(group)
       } else {
         const radius = fingerRadius * 0.75
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-        circle.setAttribute('cx', `${x}`)
-        circle.setAttribute('cy', `${y - radius * 1.1}`)
-        circle.setAttribute('r', `${radius}`)
-        circle.setAttribute('fill', 'transparent')
-        circle.setAttribute('stroke', crossLineColor)
-        circle.setAttribute('stroke-width', `${crossLineWidth}`)
+        const circle = createSvgElement("circle", {
+          'cx': `${x}`,
+          'cy': `${y - radius * 1.1}`,
+          'r': `${radius}`,
+          'fill': 'transparent',
+          'stroke': crossLineColor,
+          'stroke-width': `${crossLineWidth}`,
+        })
         this.#element.appendChild(circle)
       }
     }
