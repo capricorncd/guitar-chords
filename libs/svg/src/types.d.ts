@@ -66,10 +66,12 @@ export interface GuitarChordsData {
   showNotesOutsideOfChords: boolean
   // 空弦音是否显示为和弦之外的音选项`{和弦序号（吉他的话为1-6弦）: true | false}`
   notesOutsideOfChords: Record<number, boolean>
-  // 和弦外音`x`的线条粗细，默认为琴弦线条宽度。其长度为指法圆点直径
+  // 和弦外音`x/o`的线条粗细，默认为琴弦线条宽度。其长度为指法圆点直径
   crossLineWidth: number
-  // 和弦外音`x`的线条颜色
+  // 和弦外音`x/o`的线条颜色
   crossLineColor: string
+  // 和弦外音`x/o`的半径，默认为`fingerRadius * 0.75`
+  crossRadius: number
 }
 
 /**
@@ -110,4 +112,5 @@ export type DefaultOptions = PickOptional<
   | 'crossLineWidth'
   | 'crossLineColor'
   | 'nameLetterSpacing'
+  | 'crossRadius'
 >

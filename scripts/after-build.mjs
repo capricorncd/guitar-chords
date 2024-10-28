@@ -42,11 +42,15 @@ const args = parseArgs(process.argv.slice(2))
 
 /**
  * 添加头部信息和替换版本号
- * @param {*} filePath 
- * @param {*} param1 
+ * @param {*} filePath
+ * @param {*} param1
  */
 const prependHeadlinesAndReplaceVersion = (filePath, { prependLines, pkg }) => {
-  const liens = fs.readFileSync(filePath, 'utf8').toString().replace(VERSION, pkg.version).split(EOL)
+  const liens = fs
+    .readFileSync(filePath, 'utf8')
+    .toString()
+    .replace(VERSION, pkg.version)
+    .split(EOL)
   fs.writeFileSync(filePath, [...prependLines, ...liens].join(EOL))
 }
 

@@ -101,7 +101,7 @@ export class GuitarChords {
   }
 
   get data(): GuitarChordsData {
-    const { defaultColor, defaultLineWidth } = this.#options
+    const { defaultColor, defaultLineWidth, fingerRadius } = this.#options
     const {
       nameTextColor = defaultColor,
       nutLineWidth = defaultLineWidth,
@@ -117,6 +117,7 @@ export class GuitarChords {
       notesOutsideOfChords = {},
       crossLineWidth = Math.min(stringLineWidth, fretsLineWidth),
       crossLineColor = defaultColor,
+      crossRadius = fingerRadius * 0.75,
       nameLetterSpacing = 0,
     } = this.#options
     return {
@@ -137,6 +138,7 @@ export class GuitarChords {
         Object.keys(notesOutsideOfChords).length > 0,
       crossLineWidth,
       crossLineColor,
+      crossRadius,
       nameLetterSpacing,
     }
   }
@@ -428,12 +430,10 @@ export class GuitarChords {
       devicePixelRatio,
       crossLineColor,
       crossLineWidth,
-      fingerRadius,
+      crossRadius,
     } = data
 
     const context = this.#context
-
-    const diameter = fingerRadius * 1.5
 
     // 绘制垂直交叉线段，长度为指法圆点直径
     const y = this.gridRect.top / devicePixelRatio
@@ -444,20 +444,28 @@ export class GuitarChords {
         stringSpacing +
         stringLineWidth / 2
       if (notesOutsideOfChords[stringCount - i]) {
-        const crossCanvas = this.#drawCrossCanvas(data, diameter)
+        const crossCanvas = this.#drawCrossCanvas(data)
+        const crossWidth = crossCanvas.width / devicePixelRatio
+        const crossHeight = crossCanvas.height / devicePixelRatio
         // 把crossCanvas缩小一半
         context.drawImage(
           crossCanvas,
-          x - crossCanvas.width / (devicePixelRatio * 2),
-          y - crossCanvas.height / devicePixelRatio,
-          crossCanvas.width / devicePixelRatio,
-          crossCanvas.height / devicePixelRatio
+          x - crossWidth / 2,
+          y - crossHeight,
+          crossWidth,
+          crossHeight
         )
       } else {
         // 绘制空弦和弦音圆圈
         context.fillStyle = crossLineColor
         context.beginPath()
-        context.arc(x, y - diameter / 2, diameter / 2, 0, Math.PI * 2)
+        context.arc(
+          x,
+          y - crossRadius - crossLineWidth / 2,
+          crossRadius,
+          0,
+          Math.PI * 2
+        )
         context.lineWidth = crossLineWidth
         context.strokeStyle = crossLineColor
         context.stroke()
@@ -474,40 +482,54 @@ export class GuitarChords {
     return true
   }
 
-  #drawCrossCanvas(data: GuitarChordsData, diameter: number) {
-    const { crossLineColor, crossLineWidth, devicePixelRatio } = data
-    const width = diameter * devicePixelRatio
+  #drawCrossCanvas(data: GuitarChordsData) {
+    const { crossLineColor, crossLineWidth, crossRadius, devicePixelRatio } =
+      data
+    const width = crossRadius * 2 * devicePixelRatio
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('2d') as CanvasRenderingContext2D
     canvas.width = canvas.height = width
 
     context.beginPath()
-    const startPoint1 = this.#getCrossPoint(diameter, -Math.PI / 4)
-    const endPoint1 = this.#getCrossPoint(diameter, (3 * Math.PI) / 4)
-    context.moveTo(
-      startPoint1.x * devicePixelRatio,
-      startPoint1.y * devicePixelRatio
+    const startPoint1 = this.#getCrossPoint(
+      crossRadius,
+      -Math.PI / 4,
+      devicePixelRatio
     )
-    context.lineTo(
-      endPoint1.x * devicePixelRatio,
-      endPoint1.y * devicePixelRatio
+    const endPoint1 = this.#getCrossPoint(
+      crossRadius,
+      (3 * Math.PI) / 4,
+      devicePixelRatio
     )
+    context.moveTo(startPoint1.x, startPoint1.y)
+    context.lineTo(endPoint1.x, endPoint1.y)
 
-    const startPoint2 = this.#getCrossPoint(diameter, Math.PI / 4)
-    const endPoint2 = this.#getCrossPoint(diameter, (-3 * Math.PI) / 4)
-    context.moveTo(
-      startPoint2.x * devicePixelRatio,
-      startPoint2.y * devicePixelRatio
+    const startPoint2 = this.#getCrossPoint(
+      crossRadius,
+      Math.PI / 4,
+      devicePixelRatio
     )
-    context.lineTo(
-      endPoint2.x * devicePixelRatio,
-      endPoint2.y * devicePixelRatio
+    const endPoint2 = this.#getCrossPoint(
+      crossRadius,
+      (-3 * Math.PI) / 4,
+      devicePixelRatio
     )
+    context.moveTo(startPoint2.x, startPoint2.y)
+    context.lineTo(endPoint2.x, endPoint2.y)
 
     context.strokeStyle = crossLineColor
     context.lineJoin = 'round'
     context.lineWidth = crossLineWidth * devicePixelRatio
     context.stroke()
+
+    // 在4个端点绘制小圆，使直线看上去有圆角
+    const points = [startPoint1, endPoint1, startPoint2, endPoint2]
+    points.forEach(({ x, y }) => {
+      context.fillStyle = crossLineColor
+      context.beginPath()
+      context.arc(x, y, (crossLineWidth * devicePixelRatio) / 2, 0, Math.PI * 2)
+      context.fill()
+    })
 
     return canvas
   }
@@ -515,20 +537,23 @@ export class GuitarChords {
   /**
    * 从以直径为边长的矩形中，根据角度获取内切圆边与圆心为起点的直线的交叉点的坐标
    * 并将交叉点坐标转换为以矩形左上角为原点的坐标
-   * @param diameter 圆的直径
+   * @param radius 圆的半径
    * @param angle 角度（弧度）
    * @returns 交点坐标
    */
-  #getCrossPoint(diameter: number, angle: number): { x: number; y: number } {
-    const radius = diameter / 2
+  #getCrossPoint(
+    radius: number,
+    angle: number,
+    devicePixelRatio: number
+  ): { x: number; y: number } {
     // 计算圆上的点
     const x = radius * Math.cos(angle)
     const y = radius * Math.sin(angle)
 
     // 将坐标转换为以矩形左上角为原点的坐标系
     return {
-      x: x + radius,
-      y: y + radius,
+      x: (x + radius) * devicePixelRatio,
+      y: (y + radius) * devicePixelRatio,
     }
   }
 }

@@ -85,7 +85,7 @@ export class GuitarChords {
   }
 
   get data(): GuitarChordsData {
-    const { defaultColor, defaultLineWidth } = this.#options
+    const { defaultColor, defaultLineWidth, fingerRadius } = this.#options
     const {
       nameTextColor = defaultColor,
       nutLineWidth = defaultLineWidth,
@@ -101,6 +101,7 @@ export class GuitarChords {
       showNotesOutsideOfChords,
       crossLineWidth = Math.min(stringLineWidth, fretsLineWidth),
       crossLineColor = defaultColor,
+      crossRadius = fingerRadius * 0.75,
       nameLetterSpacing = 0,
     } = this.#options
     return {
@@ -121,6 +122,7 @@ export class GuitarChords {
         Object.keys(notesOutsideOfChords).length > 0,
       crossLineWidth,
       crossLineColor,
+      crossRadius,
       nameLetterSpacing,
     }
   }
@@ -437,7 +439,7 @@ export class GuitarChords {
       stringSpacing,
       stringCount,
       notesOutsideOfChords,
-      fingerRadius,
+      crossRadius,
       crossLineColor,
       crossLineWidth,
     } = data
@@ -452,15 +454,15 @@ export class GuitarChords {
         stringSpacing
       if (notesOutsideOfChords[stringCount - i]) {
         const group = createSvgElement('g', {
-          transform: `translate(${x - fingerRadius / 2}, ${y - fingerRadius * 1.2})`,
+          transform: `translate(${x - crossRadius}, ${y - crossRadius * 2}) rotate(45 ${crossRadius} ${crossRadius})`,
         })
 
         // 绘制交叉线
         const line1 = createSvgElement('line', {
-          x1: '0',
-          y1: '0',
-          x2: `${fingerRadius}`,
-          y2: `${fingerRadius}`,
+          x1: 0,
+          y1: crossRadius,
+          x2: crossRadius * 2,
+          y2: crossRadius,
           stroke: crossLineColor,
           'stroke-width': `${crossLineWidth}`,
           'stroke-linecap': 'round',
@@ -468,10 +470,10 @@ export class GuitarChords {
         group.appendChild(line1)
 
         const line2 = createSvgElement('line', {
-          x1: '0',
-          y1: `${fingerRadius}`,
-          x2: `${fingerRadius}`,
-          y2: '0',
+          x1: crossRadius,
+          y1: 0,
+          x2: crossRadius,
+          y2: crossRadius * 2,
           stroke: crossLineColor,
           'stroke-width': `${crossLineWidth}`,
           'stroke-linecap': 'round',
@@ -480,11 +482,10 @@ export class GuitarChords {
 
         this.#element.appendChild(group)
       } else {
-        const radius = fingerRadius * 0.75
         const circle = createSvgElement('circle', {
           cx: `${x}`,
-          cy: `${y - radius * 1.1}`,
-          r: `${radius}`,
+          cy: `${y - crossRadius - crossLineWidth / 2}`,
+          r: `${crossRadius}`,
           fill: 'transparent',
           stroke: crossLineColor,
           'stroke-width': `${crossLineWidth}`,

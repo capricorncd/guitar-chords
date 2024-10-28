@@ -150,7 +150,7 @@ const chordsList: GuitarChordsOptions[] = [
     transpose: 1,
     nutLineWidth: 10,
     mergeFingerCircle: true,
-    nameLetterSpacing: 12,
+    nameLetterSpacing: -5,
     matrix: [
       [0, 0, 0, 0, 0, 0],
       [0, 1, 0, 2, 0, 0],
