@@ -16,6 +16,7 @@ import type {
 export class GuitarChords {
   #options: DefaultOptions
   #element: SVGElement
+  #version: string = '__VERSION__'
 
   constructor(options: Partial<GuitarChordsOptions> = {}) {
     this.#options = {
@@ -77,6 +78,10 @@ export class GuitarChords {
       right: this.width - stringSpacing,
       bottom: this.height,
     }
+  }
+
+  get version() {
+    return this.#version
   }
 
   get data(): GuitarChordsData {

@@ -15,7 +15,7 @@
     }
   },
   "scripts": {
-    "build": "vite build && node ../../node_modules/@zx-libs/header --dir=dist",
+    "build": "vite build && node ../../scripts/after-build.mjs --dir=dist",
     "pl": "npm run build && npm publish",
     "pl:first": "npm publish --access public"
   },

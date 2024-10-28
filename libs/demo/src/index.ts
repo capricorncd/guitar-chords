@@ -162,14 +162,6 @@ const chordsList: GuitarChordsOptions[] = [
   },
 ]
 
-const app = document.getElementById('app') as HTMLDivElement
-
-const canvasTitle = document.createElement('h1')
-canvasTitle.textContent = 'Canvas'
-app.append(canvasTitle)
-
-app.append(...chordsList.map((v) => new CanvasGuitarChords(v).element))
-
 const cSharpData: GuitarChordsOptions = {
   name: 'C',
   transpose: 1,
@@ -185,26 +177,35 @@ const cSharpData: GuitarChordsOptions = {
   mergeFingerCircle: true,
 }
 
+const app = document.getElementById('app') as HTMLDivElement
+
 const testCanvas = new CanvasGuitarChords({
   ...chordsList[0],
   autoRender: false,
 })
 console.log(testCanvas.data)
 
+const canvasTitle = document.createElement('h1')
+canvasTitle.textContent = '@guitar-chords/canvas ' + testCanvas.version
+app.append(canvasTitle)
+
+app.append(...chordsList.map((v) => new CanvasGuitarChords(v).element))
+
 testCanvas.render()
 app.append(testCanvas.render(cSharpData).element)
 
-const svgTitle = document.createElement('h1')
-svgTitle.textContent = 'SVG'
-app.append(svgTitle)
-
-app.append(...chordsList.map((v) => new SvgGuitarChords(v).element))
-
+// SVG
 const testSvg = new SvgGuitarChords({
   ...chordsList[0],
   autoRender: false,
 })
 console.log(testSvg.data)
+
+const svgTitle = document.createElement('h1')
+svgTitle.textContent = '@guitar-chords/svg ' + testSvg.version
+app.append(svgTitle)
+
+app.append(...chordsList.map((v) => new SvgGuitarChords(v).element))
 
 testSvg.render()
 app.append(testSvg.render({ ...cSharpData, name: 'Test' }).element)

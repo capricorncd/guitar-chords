@@ -17,6 +17,7 @@ export class GuitarChords {
   #element: HTMLCanvasElement
   #context: CanvasRenderingContext2D
   #dpr: number
+  #version: string = '__VERSION__'
 
   constructor(options: GuitarChordsOptions) {
     this.#options = {
@@ -93,6 +94,10 @@ export class GuitarChords {
       right: (this.width - stringSpacing) * this.#dpr,
       bottom: this.height * this.#dpr,
     }
+  }
+
+  get version() {
+    return this.#version
   }
 
   get data(): GuitarChordsData {

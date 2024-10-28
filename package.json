@@ -51,5 +51,8 @@
     "url": "https://github.com/capricorncd/guitar-chords"
   },
   "author": "Capricorncd<capricorncd@qq.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@zx-libs/utils": "^0.0.6"
+  }
 }
