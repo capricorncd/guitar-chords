@@ -6,6 +6,7 @@ import type { DefaultOptions } from './types'
 
 /**
  * @constant DEF_OPTIONS
+ * @private
  * 和弦默认选项
  */
 export const DEF_OPTIONS: DefaultOptions = {

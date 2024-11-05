@@ -7,6 +7,7 @@ import type {
   GuitarChordsData,
   GuitarChordsOptions,
   DefaultOptions,
+  GridRect,
 } from './types'
 
 /**
@@ -17,6 +18,8 @@ import type {
  * `options`和弦实例化选项，见[GuitarChordsOptions](#GuitarChordsOptions)
  *
  * ```js
+ * import { GuitarChords } from '@guitar-chords/canvas'
+ *
  * const guitarChords = new GuitarChords({
  *   name: 'C',
  *   matrix: [
@@ -102,9 +105,9 @@ export class GuitarChords {
   /**
    * @property gridRect
    * 获取网格的尺寸及位置信息。
-   * @returns `GridRect` 见[GridRect](#GridRect)
+   * @returns `GridRect` 见[GridRect](#gridrect-1)
    */
-  get gridRect() {
+  get gridRect(): GridRect {
     const {
       stringLineWidth,
       stringSpacing,
@@ -192,7 +195,7 @@ export class GuitarChords {
   /**
    * @method render(options)
    * 重新渲染和弦图
-   * @param options? `Partial<GuitarChordsOptions>` 和弦配置选项
+   * @param options? `Partial<GuitarChordsOptions>` 和弦实例化选项，见[GuitarChordsOptions](#GuitarChordsOptions)
    * @returns `GuitarChords`
    */
   render(options?: Partial<GuitarChordsOptions>) {

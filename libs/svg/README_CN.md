@@ -1,11 +1,11 @@
 # GuitarChords
 
-用于创建一个Canvas吉他和弦实例。
+用于创建一个Svg吉他和弦实例。
 
 `options`和弦实例化选项，见[GuitarChordsOptions](#GuitarChordsOptions)
 
 ```js
-import { GuitarChords } from '@guitar-chords/canvas'
+import { GuitarChords } from '@guitar-chords/svg'
 
 const guitarChords = new GuitarChords({
   name: 'C',
@@ -33,7 +33,7 @@ console.log(guitarChords.data)
 
 获取Canvas元素
 
-- @returns `HTMLCanvasElement`
+- @returns `SVGElement`
 
 ### gridRect
 
@@ -110,7 +110,7 @@ interface GridRect {
 
 ### GuitarChordsData
 
-吉他和弦所有选项（配置数据）
+吉他和弦配置数据。
 
 Prop|Types|Required|Description
 :--|:--|:--|:--
@@ -146,8 +146,6 @@ notesOutsideOfChords|`Record<number, boolean>`|yes|空弦音是否显示为和�
 crossLineWidth|`number`|yes|和弦外音`x/o`的线条粗细，默认为琴弦线条宽度。其长度为指法圆点直径
 crossLineColor|`string`|yes|和弦外音`x/o`的线条颜色
 crossRadius|`number`|yes|和弦外音`x/o`的半径，默认为`fingerRadius * 0.75`
-fontFamily|`string`|yes|字体，默认`Arial`
-devicePixelRatio|`number`|yes|设备像素比
 
 <details>
 <summary>Source Code</summary>
@@ -218,10 +216,6 @@ interface GuitarChordsData {
   crossLineColor: string
   // 和弦外音`x/o`的半径，默认为`fingerRadius * 0.75`
   crossRadius: number
-  // 字体，默认`Arial`
-  fontFamily: string
-  // 设备像素比
-  devicePixelRatio: number
 }
 ```
 
@@ -255,7 +249,6 @@ const DEF_OPTIONS: DefaultOptions = {
   defaultColor: '#000',
   defaultLineWidth: 4,
   transpose: 0,
-  fontFamily: 'Arial',
   name: '',
   nameFontSize: 60,
   // nameTextColor: '',
@@ -271,8 +264,8 @@ const DEF_OPTIONS: DefaultOptions = {
   stringCount: 6,
   fingerRadius: 15,
   // fingerCircleColor: '',
-  showFingerNumber: true,
   fingerNumberTextColor: '#fff',
+  showFingerNumber: true,
   startFrets: 0,
   // startFretsTextColor: '',
   matrix: [
@@ -282,6 +275,5 @@ const DEF_OPTIONS: DefaultOptions = {
   ],
   mergeFingerCircle: false,
   showNotesOutsideOfChords: false,
-  devicePixelRatio: window.devicePixelRatio || 1,
 }
 ```

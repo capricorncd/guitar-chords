@@ -5,7 +5,7 @@
 
 /**
  * @type GuitarChordsData
- * 吉他和弦配置数据
+ * 吉他和弦配置数据。
  */
 export interface GuitarChordsData {
   // 实例化时是否自动渲染，默认为true
@@ -86,7 +86,7 @@ type OmitOptional<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>
 
 /**
  * @type GuitarChordsOptions
- * 和弦配置选项
+ * 和弦实力化时必须的配置选项，见[GuitarChordsData](#GuitarChordsData)
  */
 export type GuitarChordsOptions = OmitOptional<
   GuitarChordsData,
@@ -114,3 +114,22 @@ export type DefaultOptions = PickOptional<
   | 'nameLetterSpacing'
   | 'crossRadius'
 >
+
+/**
+ * @type GridRect
+ * 网格尺寸及位置信息。
+ */
+export interface GridRect {
+  // 网格宽度
+  width: number
+  // 网格高度
+  height: number
+  // 网格顶部在整个和弦图中的位置
+  top: number
+  // 网格右侧在整个和弦图中的位置
+  right: number
+  // 网格底部在整个和弦图中的位置
+  bottom: number
+  // 网格左侧在整个和弦图中的位置
+  left: number
+}

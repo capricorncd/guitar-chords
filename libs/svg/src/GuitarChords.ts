@@ -8,10 +8,32 @@ import type {
   GuitarChordsOptions,
   GuitarChordsData,
   DefaultOptions,
+  GridRect,
 } from './types'
 
 /**
- * @document 吉他和弦
+ * @document GuitarChords
+ *
+ * 用于创建一个Svg吉他和弦实例。
+ *
+ * `options`和弦实例化选项，见[GuitarChordsOptions](#GuitarChordsOptions)
+ *
+ * ```js
+ * import { GuitarChords } from '@guitar-chords/svg'
+ *
+ * const guitarChords = new GuitarChords({
+ *   name: 'C',
+ *   matrix: [
+ *     [0, 0, 0, 0, 1, 0],
+ *     [0, 0, 2, 0, 0, 0],
+ *     [3, 4, 0, 0, 0, 0],
+ *   ],
+ * })
+ * // get canvas element and append to body
+ * document.querySelect('body').append(guitarChords.element)
+ * // get data
+ * console.log(guitarChords.data)
+ * ```
  */
 export class GuitarChords {
   #options: DefaultOptions
@@ -29,15 +51,30 @@ export class GuitarChords {
     if (autoRender) this.#draw()
   }
 
+  /**
+   * @property element
+   * 获取Canvas元素
+   * @returns `SVGElement`
+   */
   get element() {
     return this.#element
   }
 
+  /**
+   * @property width
+   * 获取和弦的宽度
+   * @returns `number`
+   */
   get width() {
     const { stringCount, stringSpacing, stringLineWidth } = this.data
     return stringSpacing * (stringCount + 1) + stringLineWidth * stringCount
   }
 
+  /**
+   * @property height
+   * 获取和弦的高度
+   * @returns `number`
+   */
   get height() {
     const {
       nutLineWidth,
@@ -56,9 +93,11 @@ export class GuitarChords {
   }
 
   /**
-   * 网格尺寸
+   * @property gridRect
+   * 获取网格的尺寸及位置信息。
+   * @returns `GridRect` 见[GridRect](#gridrect-1)
    */
-  get gridRect() {
+  get gridRect(): GridRect {
     const {
       nutLineWidth,
       stringSpacing,
@@ -80,10 +119,20 @@ export class GuitarChords {
     }
   }
 
+  /**
+   * @property version
+   * 获取当前版本
+   * @returns `string` 版本号，比如`1.0.0`
+   */
   get version() {
     return this.#version
   }
 
+  /**
+   * @property data
+   * 获取和弦的数据
+   * @returns `GuitarChordsData` 见[GuitarChordsData](#GuitarChordsData)
+   */
   get data(): GuitarChordsData {
     const { defaultColor, defaultLineWidth, fingerRadius } = this.#options
     const {
@@ -128,9 +177,10 @@ export class GuitarChords {
   }
 
   /**
-   * 重新绘制
-   * @param options 和弦配置选项
-   * @returns
+   * @method render(options)
+   * 重新渲染和弦图
+   * @param options? `Partial<GuitarChordsOptions>` 和弦实例化选项，见[GuitarChordsOptions](#GuitarChordsOptions)
+   * @returns `GuitarChords`
    */
   render(options?: Partial<GuitarChordsOptions>) {
     if (options) {
