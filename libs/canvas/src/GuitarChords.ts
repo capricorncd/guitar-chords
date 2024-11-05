@@ -10,7 +10,26 @@ import type {
 } from './types'
 
 /**
- * @document 吉他和弦
+ * @document GuitarChords
+ *
+ * 用于创建一个Canvas吉他和弦实例。
+ *
+ * `options`和弦实例化选项，见[GuitarChordsOptions](#GuitarChordsOptions)
+ *
+ * ```js
+ * const guitarChords = new GuitarChords({
+ *   name: 'C',
+ *   matrix: [
+ *     [0, 0, 0, 0, 1, 0],
+ *     [0, 0, 2, 0, 0, 0],
+ *     [3, 4, 0, 0, 0, 0],
+ *   ],
+ * })
+ * // get canvas element and append to body
+ * document.querySelect('body').append(guitarChords.element)
+ * // get data
+ * console.log(guitarChords.data)
+ * ```
  */
 export class GuitarChords {
   #options: DefaultOptions
@@ -34,10 +53,20 @@ export class GuitarChords {
     if (autoRender) this.#draw()
   }
 
+  /**
+   * @property element
+   * 获取Canvas元素
+   * @returns `HTMLCanvasElement`
+   */
   get element() {
     return this.#element
   }
 
+  /**
+   * @property width
+   * 获取和弦的宽度
+   * @returns `number`
+   */
   get width() {
     const { stringCount, stringSpacing, stringLineWidth } = this.data
     return (
@@ -46,6 +75,11 @@ export class GuitarChords {
     )
   }
 
+  /**
+   * @property height
+   * 获取和弦的高度
+   * @returns `number`
+   */
   get height() {
     const {
       nutLineWidth,
@@ -66,7 +100,9 @@ export class GuitarChords {
   }
 
   /**
-   * 网格尺寸
+   * @property gridRect
+   * 获取网格的尺寸及位置信息。
+   * @returns `GridRect` 见[GridRect](#GridRect)
    */
   get gridRect() {
     const {
@@ -96,10 +132,20 @@ export class GuitarChords {
     }
   }
 
+  /**
+   * @property version
+   * 获取当前版本
+   * @returns `string` 版本号，比如`1.0.0`
+   */
   get version() {
     return this.#version
   }
 
+  /**
+   * @property data
+   * 获取和弦的数据
+   * @returns `GuitarChordsData` 见[GuitarChordsData](#GuitarChordsData)
+   */
   get data(): GuitarChordsData {
     const { defaultColor, defaultLineWidth, fingerRadius } = this.#options
     const {
@@ -144,9 +190,10 @@ export class GuitarChords {
   }
 
   /**
-   * 重新绘制
-   * @param options 和弦配置选项
-   * @returns
+   * @method render(options)
+   * 重新渲染和弦图
+   * @param options? `Partial<GuitarChordsOptions>` 和弦配置选项
+   * @returns `GuitarChords`
    */
   render(options?: Partial<GuitarChordsOptions>) {
     if (options) {
@@ -159,6 +206,9 @@ export class GuitarChords {
     return this
   }
 
+  /**
+   * 绘制
+   */
   #draw() {
     const data = this.data
     const { width, height } = this
@@ -240,6 +290,9 @@ export class GuitarChords {
     }
   }
 
+  /**
+   * 绘制指法位置
+   */
   #drawFingerPositions(data: GuitarChordsData) {
     const {
       stringSpacing,
@@ -421,6 +474,9 @@ export class GuitarChords {
     }
   }
 
+  /**
+   * 绘制x/o，空弦音是否为和弦音
+   */
   #drawNotesOutsideOfChords(data: GuitarChordsData) {
     const {
       stringLineWidth,
@@ -482,6 +538,9 @@ export class GuitarChords {
     return true
   }
 
+  /**
+   * 绘制和弦外音`x`
+   */
   #drawCrossCanvas(data: GuitarChordsData) {
     const { crossLineColor, crossLineWidth, crossRadius, devicePixelRatio } =
       data
