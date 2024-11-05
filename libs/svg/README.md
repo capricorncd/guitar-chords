@@ -42,7 +42,7 @@ console.log(guitarChords.data)
 
 Get the chord data.
 
-- @returns `GuitarChordsData` 见[GuitarChordsData](#GuitarChordsData)
+- @returns `GuitarChordsData` See [GuitarChordsData](#GuitarChordsData)
 
 ### element
 

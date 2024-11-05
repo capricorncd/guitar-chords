@@ -4,12 +4,16 @@ Generate a guitar chords or edit it.
 
 ## @guitar-chords/canvas
 
-See [libs/canvas](https://github.com/capricorncd/guitar-chords/tree/main/libs/canvas)
+See [libs/canvas](./libs/canvas)
 
-README [English](./blob/main/libs/canvas/README.md) [中文](./blob/main/libs/canvas/README_CN.md)
+README [English](./libs/canvas/README.md) - [中文](./libs/canvas/README_CN.md)
 
 ## @guitar-chords/svg
 
-See [libs/svg](https://github.com/capricorncd/guitar-chords/tree/main/libs/svg)
+See [libs/svg](./libs/svg)
 
-README [English](./blob/main/libs/svg/README.md) [中文](./blob/main/libs/svg/README_CN.md)
+README [English](./libs/svg/README.md) - [中文](./libs/svg/README_CN.md)
+
+## @guitar-chords/editor
+
+TODO
