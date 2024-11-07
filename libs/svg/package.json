@@ -19,7 +19,23 @@
     "pl": "npm run build && npm publish",
     "pl:first": "npm publish --access public"
   },
-  "files": ["src", "dist"],
+  "files": [
+    "src",
+    "dist",
+    "package.json",
+    "README.md"
+  ],
+  "keywords": [
+    "guitar-chords", 
+    "guitar", 
+    "chords", 
+    "svg", 
+    "canvas", 
+    "Ukulele", 
+    "diagram", 
+    "javascript", 
+    "typescript"
+  ],
   "homepage": "https://github.com/capricorncd/guitar-chords",
   "repository": {
     "url": "https://github.com/capricorncd/guitar-chords"
