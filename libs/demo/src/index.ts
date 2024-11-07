@@ -194,6 +194,86 @@ app.append(...chordsList.map((v) => new CanvasGuitarChords(v).element))
 testCanvas.render()
 app.append(testCanvas.render(cSharpData).element)
 
+const ukuleleBaseOptions: Omit<GuitarChordsOptions, 'name' | 'matrix'> = {
+  nutLineWidth: 10,
+  showFingerNumber: false,
+  fretsSpacing: 36,
+  spacing: 0,
+  nameFontSize: 50,
+}
+
+const ukulele: GuitarChordsOptions[] = [
+  {
+    name: 'C',
+    matrix: [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 1],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    name: 'Dm',
+    matrix: [
+      [0, 0, 1, 0],
+      [1, 1, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    name: 'Em',
+    matrix: [
+      [0, 0, 0, 0],
+      [0, 0, 0, 1],
+      [0, 0, 1, 0],
+      [0, 1, 0, 0],
+    ],
+  },
+  {
+    name: 'F',
+    matrix: [
+      [0, 0, 1, 0],
+      [1, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    name: 'G',
+    matrix: [
+      [0, 0, 0, 0],
+      [0, 1, 0, 1],
+      [0, 0, 1, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    name: 'Am',
+    matrix: [
+      [0, 0, 0, 0],
+      [1, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+  {
+    name: 'G7',
+    matrix: [
+      [0, 0, 1, 0],
+      [0, 2, 0, 3],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ],
+  },
+]
+
+app.append(
+  ...ukulele.map(
+    (v) => new CanvasGuitarChords({ ...ukuleleBaseOptions, ...v }).element
+  )
+)
+
 // SVG
 const testSvg = new SvgGuitarChords({
   ...chordsList[0],
@@ -209,3 +289,9 @@ app.append(...chordsList.map((v) => new SvgGuitarChords(v).element))
 
 testSvg.render()
 app.append(testSvg.render({ ...cSharpData, name: 'Test' }).element)
+
+app.append(
+  ...ukulele.map(
+    (v) => new SvgGuitarChords({ ...ukuleleBaseOptions, ...v }).element
+  )
+)
