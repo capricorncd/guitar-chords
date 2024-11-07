@@ -150,7 +150,8 @@ export class GuitarChords {
    * @returns `GuitarChordsData` 见[GuitarChordsData](#GuitarChordsData)
    */
   get data(): GuitarChordsData {
-    const { defaultColor, defaultLineWidth, fingerRadius } = this.#options
+    const { defaultColor, defaultLineWidth, fingerRadius, matrix } =
+      this.#options
     const {
       nameTextColor = defaultColor,
       nutLineWidth = defaultLineWidth,
@@ -189,6 +190,7 @@ export class GuitarChords {
       crossLineColor,
       crossRadius,
       nameLetterSpacing,
+      stringCount: matrix[0].length ?? 6,
     }
   }
 

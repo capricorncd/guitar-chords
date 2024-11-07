@@ -93,7 +93,7 @@ type OmitOptional<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>
  * 和弦实力化时必须的配置选项，见[GuitarChordsData](#GuitarChordsData)
  */
 export type GuitarChordsOptions = OmitOptional<
-  GuitarChordsData,
+  Omit<GuitarChordsData, 'stringCount'>,
   'name' | 'matrix'
 >
 
@@ -101,7 +101,7 @@ export type GuitarChordsOptions = OmitOptional<
  * DefaultOptions
  */
 export type DefaultOptions = PickOptional<
-  GuitarChordsData,
+  Omit<GuitarChordsData, 'stringCount'>,
   | 'nameTextColor'
   | 'transposeTextColor'
   | 'nutLineWidth'

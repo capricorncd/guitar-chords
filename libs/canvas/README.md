@@ -125,7 +125,6 @@ fretsLineWidth|`number`|yes|Fret Line Width
 stringSpacing|`number`|yes|String line spacing
 stringColor|`string`|yes|String line color
 stringLineWidth|`number`|yes|String line width
-stringCount|`number`|yes|The number of strings, the default is `6`
 fingerRadius|`number`|yes|Radius of the fingering dot
 fingerCircleColor|`string`|yes|Fingering dot color
 showFingerNumber|`boolean`|yes|Whether to display the finger number, the default is `true`
@@ -169,7 +168,6 @@ Chord Default Options
   spacing: 20,
   fretsSpacing: 50,
   stringSpacing: 30,
-  stringCount: 6,
   fingerRadius: 15,
   showFingerNumber: true,
   fingerNumberTextColor: '#fff',

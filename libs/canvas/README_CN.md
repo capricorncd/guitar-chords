@@ -236,7 +236,7 @@ interface GuitarChordsData {
 
 ```ts
 type GuitarChordsOptions = OmitOptional<
-  GuitarChordsData,
+  Omit<GuitarChordsData, 'stringCount'>,
   'name' | 'matrix'
 >
 ```
@@ -268,7 +268,6 @@ const DEF_OPTIONS: DefaultOptions = {
   stringSpacing: 30,
   // stringColor: '',
   // stringLineWidth: LINE_WIDTH,
-  stringCount: 6,
   fingerRadius: 15,
   // fingerCircleColor: '',
   showFingerNumber: true,
