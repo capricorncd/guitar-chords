@@ -67,6 +67,7 @@ const chordsList: GuitarChordsOptions[] = [
     notesOutsideOfChords: {
       6: true,
     },
+    crossLineWidth: 2,
   },
   {
     name: 'G7',
