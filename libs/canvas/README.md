@@ -125,6 +125,7 @@ fretsLineWidth|`number`|yes|Fret Line Width
 stringSpacing|`number`|yes|String line spacing
 stringColor|`string`|yes|String line color
 stringLineWidth|`number`|yes|String line width
+stringCount|`number`|yes|The number of strings, which is the value of `matrix[i].length` or `6`
 fingerRadius|`number`|yes|Radius of the fingering dot
 fingerCircleColor|`string`|yes|Fingering dot color
 showFingerNumber|`boolean`|yes|Whether to display the finger number, the default is `true`
@@ -146,10 +147,10 @@ devicePixelRatio|`number`|yes|Device pixel ratio
 Required configuration options for chord strength, see [GuitarChordsData](#GuitarChordsData)
 
 ```ts
-interface GuitarChordsOptions {
+type GuitarChordsOptions = {
   name: string;
   matrix: GuitarChordsData['matrix'];
-}
+} & Omit<GuitarChordsData, 'stringCount'>
 ```
 
 ## Constants

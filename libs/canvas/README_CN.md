@@ -132,7 +132,7 @@ fretsLineWidth|`number`|yes|品丝线条宽度
 stringSpacing|`number`|yes|琴弦线条间距
 stringColor|`string`|yes|琴弦线条颜色
 stringLineWidth|`number`|yes|琴弦线条宽度
-stringCount|`number`|yes|琴弦数量，默认为6
+stringCount|`number`|yes|琴弦数量，为`matrix[i].length`的值或`6`
 fingerRadius|`number`|yes|指法圆点的半径
 fingerCircleColor|`string`|yes|指法圆点颜色
 showFingerNumber|`boolean`|yes|是否显示手指编号，默认true
@@ -190,7 +190,7 @@ interface GuitarChordsData {
   stringColor: string
   // 琴弦线条宽度
   stringLineWidth: number
-  // 琴弦数量，默认为6
+  // 琴弦数量，为`matrix[i].length`的值或`6`
   stringCount: number
   // 指法圆点的半径
   fingerRadius: number

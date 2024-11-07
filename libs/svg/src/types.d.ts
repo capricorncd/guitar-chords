@@ -44,7 +44,7 @@ export interface GuitarChordsData {
   stringColor: string
   // 琴弦线条宽度
   stringLineWidth: number
-  // 琴弦数量，默认为6
+  // 琴弦数量，为`matrix[i].length`的值或`6`
   stringCount: number
   // 指法圆点的半径
   fingerRadius: number
