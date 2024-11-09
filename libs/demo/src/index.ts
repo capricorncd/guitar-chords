@@ -7,12 +7,6 @@ import { GuitarChords as SvgGuitarChords } from '@guitar-chords/svg'
 const chordsList: GuitarChordsOptions[] = [
   {
     name: 'C',
-    nutLineWidth: 10,
-    nameTextColor: '#f30',
-    nutColor: '#f30',
-    fingerCircleColor: '#f30',
-    stringColor: '#078',
-    fretsColor: '#f88',
     matrix: [
       [0, 0, 0, 0, 1, 0],
       [0, 0, 2, 0, 0, 0],
@@ -32,6 +26,11 @@ const chordsList: GuitarChordsOptions[] = [
   {
     name: 'Em',
     fretsLineWidth: 8,
+    nameTextColor: '#080',
+    nutColor: '#f30',
+    fingerCircleColor: '#f30',
+    stringColor: '#078',
+    fretsColor: '#f88',
     matrix: [
       [0, 0, 0, 0, 0, 0],
       [0, 2, 3, 0, 0, 0],
@@ -50,6 +49,7 @@ const chordsList: GuitarChordsOptions[] = [
   },
   {
     name: 'G',
+    nutLineWidth: 10,
     matrix: [
       [0, 0, 0, 0, 0, 0],
       [0, 2, 0, 0, 0, 0],
