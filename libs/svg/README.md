@@ -178,7 +178,3 @@ Chord Default Options
   showNotesOutsideOfChords: false,
 }
 ```
-
-## Contributors
-
-90% of the code for `version<=0.0.4` is completed by `Cursor` (The AI ​​Code Editor)

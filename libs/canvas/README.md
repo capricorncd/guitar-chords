@@ -183,7 +183,3 @@ Chord Default Options
   devicePixelRatio: window.devicePixelRatio || 1,
 }
 ```
-
-## Contributors
-
-70% of the code for `version<=0.0.6` is completed by `Cursor` (The AI ​​Code Editor).
