@@ -13,5 +13,5 @@
     "extensions": [".ts", ".tsx", ".js", ".cjs", ".mjs"]
   },
   "eslint.validate": ["javascript", "typescript", "react"],
-  "cSpell.words": ["Capricorncd", "Zhong", "docgen", "csstype", "stylelint"]
+  "cSpell.words": ["Capricorncd", "Zhong", "docgen", "csstype", "stylelint", "Sider"]
 }
