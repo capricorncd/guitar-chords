@@ -9,6 +9,8 @@
 
 Use SVG to generate guitar chords. [View the chord diagrams it generates →](https://capricorncd.github.io/guitar-chords/playground/).
 
+![guitar-chords](https://raw.githubusercontent.com/capricorncd/guitar-chords/main/chords.png)
+
 ## Install
 
 ```bash

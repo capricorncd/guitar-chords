@@ -33,6 +33,8 @@ import type {
  * // get data
  * console.log(guitarChords.data)
  * ```
+ *
+ * ![guitar-chords](https://raw.githubusercontent.com/capricorncd/guitar-chords/main/chords.png)
  */
 export class GuitarChords {
   #options: DefaultOptions

@@ -21,6 +21,8 @@ document.querySelect('body').append(guitarChords.element)
 console.log(guitarChords.data)
 ```
 
+![guitar-chords](https://raw.githubusercontent.com/capricorncd/guitar-chords/main/chords.png)
+
 ## Property
 
 ### data
