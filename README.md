@@ -1,6 +1,6 @@
 # guitar-chords
 
-Generate and edit guitar chord diagrams in Canvas or SVG.
+Generate and edit guitar chord diagrams in Canvas or SVG. [View the chord diagrams it generates →](https://capricorncd.github.io/guitar-chords/playground/).
 
 ```js
 import { GuitarChords } from '@guitar-chords/canvas'
@@ -19,6 +19,8 @@ document.querySelect('body').append(guitarChords.element)
 // get data
 console.log(guitarChords.data)
 ```
+
+![GuitarChords](./chord.png)
 
 ## @guitar-chords/canvas
 

@@ -1,6 +1,6 @@
 # GuitarChords
 
-用于创建一个Svg吉他和弦实例。
+用于创建一个Svg吉他和弦实例。查看生成的[和弦图 →](https://capricorncd.github.io/guitar-chords/playground/)。
 
 `options`和弦实例化选项，见[GuitarChordsOptions](#GuitarChordsOptions)
 

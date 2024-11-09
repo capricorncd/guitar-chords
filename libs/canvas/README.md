@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/styled_with-prettier-ff69b4.svg" />
 </p>
 
-Use Canvas to generate guitar chords.
+Use Canvas to generate guitar chords. [View the chord diagrams it generates →](https://capricorncd.github.io/guitar-chords/playground/).
 
 ## Install
 
