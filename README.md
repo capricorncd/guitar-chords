@@ -20,7 +20,7 @@ document.querySelect('body').append(guitarChords.element)
 console.log(guitarChords.data)
 ```
 
-![GuitarChords](./chord.png)
+![GuitarChords](./chords.png)
 
 ## @guitar-chords/canvas
 
