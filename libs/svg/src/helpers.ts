@@ -1,4 +1,4 @@
-export type SvgElementAttrs = Record<string, string | number>
+export type SvgElementAttrs = Record<string, string | number | null>
 
 /**
  * 创建SVGElement

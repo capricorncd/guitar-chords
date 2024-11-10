@@ -230,6 +230,7 @@ export class GuitarChords {
     const transposeFontSize = nameFontSize / 2
 
     const text = createSvgElement('text', {
+      id: 'gc-name',
       // 变调时，x向左偏移1/4文字大小(1/2变调符号字体大小)
       x: this.width / 2 - (hasTranspose ? transposeFontSize / 2 : 0),
       // y偏移字体大小的20%，使变调符号可以全部显示
@@ -298,6 +299,10 @@ export class GuitarChords {
     } = data
     const fontSize = fingerRadius * 1.5
 
+    const group = createSvgElement('g', {
+      id: 'gc-finger',
+    })
+
     const fingerCircleMap = new Map<number, { x: number; y: number }[]>()
 
     for (let fret = 0; fret < matrix.length; fret++) {
@@ -340,46 +345,57 @@ export class GuitarChords {
                 'stroke-width': `${fingerRadius * 2}`,
                 'stroke-linecap': 'round',
               })
-              this.#element.appendChild(line)
+              group.appendChild(line)
 
               // 在横按的最后一个位置绘制指法编号
               if (showFingerNumber) {
-                this.#drawFingerNumber(
-                  x,
-                  y,
-                  fingerNumber,
-                  fingerNumberTextColor,
-                  fontSize
+                group.appendChild(
+                  this.#drawFingerNumber(
+                    x,
+                    y,
+                    fingerNumber,
+                    fingerNumberTextColor,
+                    fontSize
+                  )
                 )
               }
               continue
             }
           }
 
-          const circle = createSvgElement('circle', {
-            cx: `${x}`,
-            cy: `${y}`,
-            r: `${fingerRadius}`,
-            fill: fingerCircleColor,
-          })
-          this.#element.appendChild(circle)
+          // 非大横按或小横按，或者同一行中相同的手指编号的圆点只有1个
+          if (
+            !mergeFingerCircle ||
+            matrix[fret].filter((v) => v === fingerNumber).length === 1
+          ) {
+            const circle = createSvgElement('circle', {
+              cx: `${x}`,
+              cy: `${y}`,
+              r: `${fingerRadius}`,
+              fill: fingerCircleColor,
+            })
+            group.appendChild(circle)
+          }
 
           if (
             showFingerNumber &&
             (!mergeFingerCircle ||
               string === matrix[fret].lastIndexOf(fingerNumber))
           ) {
-            this.#drawFingerNumber(
-              x,
-              y,
-              fingerNumber,
-              fingerNumberTextColor,
-              fontSize
+            group.appendChild(
+              this.#drawFingerNumber(
+                x,
+                y,
+                fingerNumber,
+                fingerNumberTextColor,
+                fontSize
+              )
             )
           }
         }
       }
     }
+    this.#element.appendChild(group)
   }
 
   // 新增一个辅助方法来绘制指法编号
@@ -402,7 +418,7 @@ export class GuitarChords {
       },
       fingerNumber
     )
-    this.#element.appendChild(text)
+    return text
   }
 
   #drawFretNumbers(data: GuitarChordsData) {
@@ -420,6 +436,7 @@ export class GuitarChords {
     const text = createSvgElement(
       'text',
       {
+        id: 'gc-fret-number',
         x: '0',
         y: `${this.gridRect.top + nutLineWidth + fretsSpacing / 2 + fretsLineWidth * 2}`,
         fill: startFretsTextColor,
@@ -448,6 +465,13 @@ export class GuitarChords {
 
     const { top, bottom, right, left } = this.gridRect
 
+    const group = createSvgElement('g', { id: 'gc-grid' })
+
+    const stringGroup = createSvgElement('g', {
+      id: 'gc-grid-string',
+      stroke: stringColor,
+      'stroke-width': stringLineWidth,
+    })
     // 绘制竖线（代表琴弦）
     for (let i = 0; i < stringCount; i++) {
       const x =
@@ -460,12 +484,15 @@ export class GuitarChords {
         y1: `${top + nutLineWidth}`,
         x2: `${x}`,
         y2: `${bottom}`,
-        stroke: stringColor,
-        'stroke-width': `${stringLineWidth}`,
       })
-      this.#element.appendChild(line)
+      stringGroup.appendChild(line)
     }
 
+    const fretGroup = createSvgElement('g', {
+      id: 'gc-grid-fret',
+      stroke: fretsColor,
+      'stroke-width': fretsLineWidth,
+    })
     // 绘制横线（代表品位）
     for (let i = 0; i <= fretCount; i++) {
       const isNut = i === 0
@@ -480,13 +507,17 @@ export class GuitarChords {
         y1: `${y}`,
         x2: `${right}`,
         y2: `${y}`,
-        stroke: isNut ? nutColor : fretsColor,
-        'stroke-width': `${isNut ? nutLineWidth : fretsLineWidth}`,
+        stroke: isNut && nutColor !== fretsColor ? nutColor : null,
+        'stroke-width':
+          isNut && nutLineWidth !== fretsLineWidth ? nutLineWidth : null,
       })
-      this.#element.appendChild(line)
+      fretGroup.appendChild(line)
     }
+    group.append(stringGroup, fretGroup)
+    this.#element.appendChild(group)
   }
 
+  /** 空弦时的音是否为和弦之外的音，`是`显示`x`，`否`显示`o` */
   #drawNotesOutsideOfChords(data: GuitarChordsData) {
     const {
       stringLineWidth,
@@ -497,6 +528,12 @@ export class GuitarChords {
       crossLineColor,
       crossLineWidth,
     } = data
+
+    const chordToneGroup = createSvgElement('g', {
+      id: 'gc-chord-tone',
+      stroke: crossLineColor,
+      'stroke-width': crossLineWidth,
+    })
 
     // 绘制垂直交叉线段，长度为指法圆点直径
     const y = this.gridRect.top
@@ -517,8 +554,6 @@ export class GuitarChords {
           y1: crossRadius,
           x2: crossRadius * 2,
           y2: crossRadius,
-          stroke: crossLineColor,
-          'stroke-width': `${crossLineWidth}`,
           'stroke-linecap': 'round',
         })
         group.appendChild(line1)
@@ -528,25 +563,23 @@ export class GuitarChords {
           y1: 0,
           x2: crossRadius,
           y2: crossRadius * 2,
-          stroke: crossLineColor,
-          'stroke-width': `${crossLineWidth}`,
           'stroke-linecap': 'round',
         })
         group.appendChild(line2)
 
-        this.#element.appendChild(group)
+        chordToneGroup.appendChild(group)
       } else {
         const circle = createSvgElement('circle', {
           cx: `${x}`,
           cy: `${y - crossRadius - crossLineWidth / 2}`,
           r: `${crossRadius}`,
           fill: 'transparent',
-          stroke: crossLineColor,
-          'stroke-width': `${crossLineWidth}`,
         })
-        this.#element.appendChild(circle)
+        chordToneGroup.appendChild(circle)
       }
     }
+
+    this.#element.appendChild(chordToneGroup)
   }
 
   /** 是否为空弦 */
